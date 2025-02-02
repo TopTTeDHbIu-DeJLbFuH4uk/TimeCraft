@@ -1,0 +1,105 @@
+* {
+    color: #000000;
+}
+
+.main-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 40px 20px;
+}
+
+.header {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: clamp(100px, 100%, 800px);
+
+    margin-bottom: 20px;
+}
+
+.tasks {
+    font-size: 28px;
+}
+
+.nav-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+.create-task button {
+    display: flex;
+    align-items: center;
+
+    width: clamp(50px, 100%, 150px);
+    height: 40px;
+    background: linear-gradient(135deg, #ff8c00, #fcbf49);
+
+    padding: 10px;
+
+    cursor: pointer;
+}
+
+.quick-search-container {
+    position: relative;
+}
+.quick-search-container::before {
+    position: absolute;
+    z-index: 100;
+    top: 10px;
+    left: 5px;
+
+    content: '';
+    background: url("../assets/list_of_tasks/search.svg") no-repeat center;
+    width: 18px;
+    height: 18px;
+}
+
+.quick-search {
+    padding: 5px 5px 5px 20px;
+}
+
+.select-by-container, p {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    font-size: 18px;
+}
+
+.select-by {
+    cursor: pointer;
+}
+
+/*------------------------------TABLE------------------------------*/
+
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.table {
+    border-collapse: collapse;
+    table-layout: fixed;
+    min-width: 800px;
+
+    margin: 0 auto;
+}
+.table th,
+.table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+}
+
+.table-header th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+}
+
+table th:nth-child(1) {
+    width: 40px;
+}

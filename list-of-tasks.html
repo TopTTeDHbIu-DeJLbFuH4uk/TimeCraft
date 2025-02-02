@@ -12,10 +12,64 @@
     <link rel="icon" href="./assets/browser_tab/logo.svg">
     <!-- STYLES -->
     <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/list-of-tasks.css">
 </head>
 <body>
 
+<main class="main-container">
+    <header class="header">
+        <h1 class="tasks">Задачи</h1>
 
+        <nav class="nav-container">
+            <a href="#" class="create-task">
+                <button>Создать задачу</button>
+            </a>
+
+            <div class="quick-search-container">
+                <input type="text" placeholder="Поиск..." class="quick-search">
+            </div>
+
+            <div class="select-by-container">
+                <p>Сортировать по:</p>
+                <select name="" id="select-by" class="select-by">
+                    <option value="">Выбрать</option>
+                </select>
+
+                <select name="" id="select-by-column" class="select-by">
+                    <option value="">Столбцы</option>
+                </select>
+            </div>
+        </nav>
+    </header>
+
+    <div class="table-container">
+        <table class="table">
+            <thead>
+            <tr class="table-header">
+                <th>
+                    <input type="checkbox">
+                </th>
+                <th>Название</th>
+                <th>Описание</th>
+                <th>Дата начала</th>
+                <th>Дата окончания</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr>
+                <th>
+                    <input type="checkbox">
+                </th>
+                <th>Серёга пощади</th>
+                <th>Жэс</th>
+                <th>02.02.2025</th>
+                <th>02.02.2026</th>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
 
 </body>
 </html>
