@@ -21,8 +21,12 @@
         <h1 class="tasks">Задачи</h1>
 
         <nav class="nav-container">
-            <a href="#" class="create-task">
+            <a href="#" class="change-task-btn btn-create-task">
                 <button>Создать задачу</button>
+            </a>
+
+            <a href="#" class="change-task-btn btn-go-to-task">
+                <button>Перейти к задаче</button>
             </a>
 
             <div class="quick-search-container">
@@ -33,10 +37,9 @@
                 <p>Сортировать по:</p>
                 <select name="" id="select-by" class="select-by">
                     <option value="">Выбрать</option>
-                </select>
-
-                <select name="" id="select-by-column" class="select-by">
-                    <option value="">Столбцы</option>
+                    <option value="">Названию</option>
+                    <option value="">Дате</option>
+                    <option value="">Времени</option>
                 </select>
             </div>
         </nav>
@@ -47,7 +50,7 @@
             <thead>
             <tr class="table-header">
                 <th>
-                    <input type="checkbox">
+                    <input type="checkbox" class="checkbox">
                 </th>
                 <th>Название</th>
                 <th>Описание</th>
@@ -59,7 +62,7 @@
             <tbody>
             <tr>
                 <th>
-                    <input type="checkbox">
+                    <input type="checkbox" class="checkbox">
                 </th>
                 <th>Серёга пощади</th>
                 <th>Жэс</th>
