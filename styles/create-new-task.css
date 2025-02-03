@@ -4,13 +4,14 @@
     left: 0;
     right: 0;
     bottom: 0;
-    z-index: -1;
 
     background-color: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(10px);
+
+    padding: 40px 5px 5px 5px;
 }
 
-.form {
+.create-task {
     width: clamp(100px, 100%, 520px);
 
     background: linear-gradient(135deg, #ff8c00, #fcbf49);
@@ -29,20 +30,14 @@
     flex-wrap: wrap;
     width: 100%;
 
-    padding: 10px;
-}
-
-.header::after {
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    content: '';
     border-bottom: 1px solid #000;
-    width: 100%;
+
+    padding: 10px;
 }
 
 .title {
     font-size: 18px;
+    padding-right: 15px;
 }
 
 .close {
@@ -56,7 +51,6 @@
     filter: brightness(0) saturate(100%) invert(15%) sepia(42%) saturate(500%) hue-rotate(10deg);
     transition: transform 0.2s, filter 0.3s;
 }
-
 .close:hover {
     transform: rotate(90deg) scale(1.2);
     filter: brightness(0) saturate(100%) invert(50%) sepia(80%) saturate(500%) hue-rotate(350deg);
@@ -71,7 +65,7 @@
     scrollbar-width: thin;
     scrollbar-color: #4b7d5f #f4e1b2;
 
-    padding: 10px;
+    padding: 10px 10px 0 10px;
 }
 
 .input-group {
@@ -81,11 +75,12 @@
 .block-title {
     margin-bottom: 5px;
 }
-
 .label {
     font-weight: 500;
     color: #5a3825;
     letter-spacing: 0.8px;
+
+    user-select: none;
 }
 
 .input-task {
@@ -104,14 +99,12 @@
 .input-task:hover {
     border-color: #c89666;
 }
-
 .input-date:focus,
 .input-task:focus {
     border-color: #a56a3a;
     box-shadow: 0 0 5px rgba(165, 106, 58, 0.5);
     outline: none;
 }
-
 .input-date::placeholder,
 .input-task::placeholder {
     color: #999;
@@ -125,9 +118,9 @@
     border-radius: 6px;
     background: #fff;
 
-    padding: 5px;
-
     transition: border 0.3s, box-shadow 0.3s;
+
+    padding: 5px;
 }
 
 .description {
@@ -164,18 +157,14 @@
 
 .footer {
     position: relative;
+
     display: flex;
     justify-content: center;
     gap: 10px;
-    padding: 10px;
-}
 
-.footer::before {
-    position: absolute;
-    top: 0;
-    content: '';
     border-top: 1px solid #000;
-    width: 100%;
+
+    padding: 10px;
 }
 
 .btn {

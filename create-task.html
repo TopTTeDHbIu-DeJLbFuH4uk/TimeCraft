@@ -16,64 +16,66 @@
 </head>
 <body>
 
-<div class="form">
-    <div class="overlay"></div>
+<div class="overlay">
+    <div class="create-task">
+        <header class="header">
+            <h1 class="title">Новая задача</h1>
+            <div class="close"></div>
+        </header>
 
-    <header class="header">
-        <h1 class="title">Новая задача</h1>
-        <div class="close"></div>
-    </header>
+        <div class="details">
+            <div class="input-group">
+                <label for="input-task" class="label block-title">Название задачи:</label>
 
-    <div class="details">
-        <div class="input-group">
-            <label for="input-task" class="label block-title">Название задачи:</label>
+                <input id="input-task"
+                       type="text"
+                       placeholder="Задача"
+                       class="input-task name-task-field input-value"
+                >
+            </div>
 
-            <input id="input-task"
-                   type="text"
-                   placeholder="Задача"
-                   class="input-task name-task-field input-value"
-            >
-        </div>
+            <div class="input-group">
+                <label for="description" class="label block-title">Описание:</label>
 
-        <div class="input-group">
-            <label for="description" class="label block-title">Описание:</label>
-
-            <textarea id="description"
-                      class="description input-value">
+                <textarea id="description"
+                          class="description input-value">
             </textarea>
-        </div>
-
-        <div class="input-group">
-            <label for="start-date" class="label block-title">Дата начала:</label>
-            <div class="date-group">
-                <input id="start-date"
-                       type="date"
-                       min="2000-01-01"
-                       class="input-date start-date input-value">
-
-                <input id="start-time"
-                       type="time"
-                       class="input-date start-time input-value">
             </div>
 
-            <label for="end-date" class="label block-title">Дата окончания:</label>
-            <div class="date-group">
-                <input id="end-date"
-                       type="date"
-                       max="2100-01-01"
-                       class="input-date end-date input-value">
+            <div class="input-group">
+                <label for="start-date" class="label block-title">Дата начала:</label>
+                <div class="date-group">
+                    <input id="start-date"
+                           type="date"
+                           min="2000-01-01"
+                           class="input-date start-date input-value">
 
-                <input id="end-time"
-                       type="time"
-                       class="input-date end-time input-value">
+                    <input id="start-time"
+                           type="time"
+                           class="input-date start-time input-value">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="end-date" class="label block-title">Дата окончания:</label>
+                <div class="date-group">
+                    <input id="end-date"
+                           type="date"
+                           max="2100-01-01"
+                           class="input-date end-date input-value">
+
+                    <input id="end-time"
+                           type="time"
+                           class="input-date end-time input-value">
+                </div>
             </div>
         </div>
+
+        <footer class="footer">
+            <button class="btn btn-save">Сохранить</button>
+            <button class="btn btn-cancel">Отмена</button>
+        </footer>
     </div>
-
-    <footer class="footer">
-        <button class="btn btn-save">Сохранить</button>
-        <button class="btn btn-cancel">Отмена</button>
-    </footer>
 </div>
 
 <script src="frontend/create-task.js"></script>
