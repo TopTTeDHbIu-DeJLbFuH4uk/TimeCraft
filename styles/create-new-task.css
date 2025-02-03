@@ -45,14 +45,17 @@
 }
 
 .close {
+    position: absolute;
+    right: 0;
+
     background: url("../assets/create_new_task/close_icon.svg") no-repeat center;
-    width: 12px;
-    height: 12px;
+    width: 40px;
+    height: 40px;
+    border-radius: 100%;
+
     fill: #5a3825;
     filter: brightness(0) saturate(100%) invert(15%) sepia(42%) saturate(500%) hue-rotate(10deg);
     transition: transform 0.2s, filter 0.3s;
-
-    padding: 10px;
 
     cursor: pointer;
 }
