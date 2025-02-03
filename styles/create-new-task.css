@@ -91,7 +91,7 @@
     user-select: none;
 }
 
-.input-task {
+.input {
     width: 100%;
     height: 40px;
     border: 2px solid #ccc;
@@ -104,17 +104,17 @@
 }
 
 .input-date:hover,
-.input-task:hover {
+.input:hover {
     border-color: #c89666;
 }
 .input-date:focus,
-.input-task:focus {
+.input:focus {
     border-color: #a56a3a;
     box-shadow: 0 0 5px rgba(165, 106, 58, 0.5);
     outline: none;
 }
 .input-date::placeholder,
-.input-task::placeholder {
+.input::placeholder {
     color: #999;
     font-style: italic;
 }
@@ -199,7 +199,6 @@
     background-color: #4a7c50;
     border: 1px solid #4a7c50;
 }
-
 .btn-save:hover {
     background-color: #6a9f6b;
     border-color: #6a9f6b;
@@ -209,7 +208,6 @@
     background-color: #d98f5b;
     border: 1px solid #d98f5b;
 }
-
 .btn-cancel:hover {
     background-color: #b77a45;
     border-color: #b77a45;
