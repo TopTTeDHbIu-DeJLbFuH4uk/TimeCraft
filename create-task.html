@@ -16,56 +16,65 @@
 </head>
 <body>
 
-<main class="main-container">
-    <div class="task-form">
-        <header class="task-header">
-            <h1 class="header">Новая задача</h1>
-            <div class="close-icon"></div>
-        </header>
+<div class="form">
+    <div class="overlay"></div>
 
-        <div class="task-details-container">
-            <div class="task-details">
-                <div class="task-name-wrapper">
-                    <label class="task-heading">Название задачи:</label>
-                    <input type="text"
-                           placeholder="Задача"
-                           class="input-task name-task-field content-in-input"
-                    >
-                </div>
+    <header class="header">
+        <h1 class="title">Новая задача</h1>
+        <div class="close"></div>
+    </header>
 
-                <div class="task-description">
-                    <h2 class="task-heading">Описание:</h2>
-                    <textarea name="" id="" cols="3" rows="3" class="description-field content-in-input"></textarea>
-                </div>
+    <div class="details">
+        <div class="input-group">
+            <label for="input-task" class="label block-title">Название задачи:</label>
 
-                <div class="planned-date-container">
-                    <h3 class="task-heading">Дата начала:</h3>
-                    <div class="date-container">
-                        <input type="date" min="2000-01-01" class="input-date start-date content-in-input">
-                        <input type="time" class="input-date start-time content-in-input">
-                    </div>
-
-                    <h3 class="task-heading">Дата окончания:</h3>
-                    <div class="date-container">
-                        <input type="date" max="2100-01-01" class="input-date end-date content-in-input">
-                        <input type="time" class="input-date end-time content-in-input">
-                    </div>
-                </div>
-            </div>
-
-
+            <input id="input-task"
+                   type="text"
+                   placeholder="Задача"
+                   class="input-task name-task-field input-value"
+            >
         </div>
 
-        <footer class="btn-container">
-            <a href="#" class="btn btn-save">
-                <button>Сохранить</button>
-            </a>
-            <a href="list-of-tasks.html" class="btn btn-cancel">
-                <button>Отмена</button>
-            </a>
-        </footer>
+        <div class="input-group">
+            <label for="description" class="label block-title">Описание:</label>
+
+            <textarea id="description"
+                      class="description input-value">
+            </textarea>
+        </div>
+
+        <div class="input-group">
+            <label for="start-date" class="label block-title">Дата начала:</label>
+            <div class="date-group">
+                <input id="start-date"
+                       type="date"
+                       min="2000-01-01"
+                       class="input-date start-date input-value">
+
+                <input id="start-time"
+                       type="time"
+                       class="input-date start-time input-value">
+            </div>
+
+            <label for="end-date" class="label block-title">Дата окончания:</label>
+            <div class="date-group">
+                <input id="end-date"
+                       type="date"
+                       max="2100-01-01"
+                       class="input-date end-date input-value">
+
+                <input id="end-time"
+                       type="time"
+                       class="input-date end-time input-value">
+            </div>
+        </div>
     </div>
-</main>
+
+    <footer class="footer">
+        <button class="btn btn-save">Сохранить</button>
+        <button class="btn btn-cancel">Отмена</button>
+    </footer>
+</div>
 
 <script src="frontend/create-task.js"></script>
 </body>
