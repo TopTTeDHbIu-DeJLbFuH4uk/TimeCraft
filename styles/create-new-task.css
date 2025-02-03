@@ -118,22 +118,14 @@
     color: #999;
     font-style: italic;
 }
-
 .input-date {
     width: clamp(100px, 100%, 140px);
-    height: 40px;
-    border: 2px solid #ccc;
-    border-radius: 6px;
-    background: #fff;
-
-    transition: border 0.3s, box-shadow 0.3s;
-
-    padding: 5px;
 }
 
-.description {
+#description {
     resize: vertical;
     width: 100%;
+    height: 60px;
 
     border: 2px solid #ccc;
     border-radius: 6px;
@@ -141,20 +133,8 @@
 
     transition: border 0.3s, box-shadow 0.3s;
 }
-
-.description:hover {
+#description:hover {
     border-color: #c89666;
-}
-
-.description:focus {
-    border-color: #a56a3a;
-    box-shadow: 0 0 5px rgba(165, 106, 58, 0.5);
-    outline: none;
-}
-
-.description::placeholder {
-    color: #999;
-    font-style: italic;
 }
 
 .date-group {
