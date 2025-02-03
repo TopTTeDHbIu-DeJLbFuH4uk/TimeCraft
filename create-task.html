@@ -10,6 +10,8 @@
     </style>
     <title>TimeCraft</title>
     <link rel="icon" href="./assets/browser_tab/logo.svg">
+    <!-- SCRIPTS -->
+    <script defer src="frontend/create-task.js"></script>
     <!-- STYLES -->
     <link rel="stylesheet" href="styles/main.css">
     <link rel="stylesheet" href="styles/create-new-task.css">
@@ -26,7 +28,7 @@
         <div class="details">
             <div class="input-group">
                 <label for="title" class="label block-title">Название задачи:</label>
-                <input id="title" type="text" placeholder="Задача" class="input">
+                <input id="title" class="input" type="text" placeholder="Задача" >
             </div>
 
             <div class="input-group">
@@ -37,16 +39,16 @@
             <div class="input-group">
                 <label for="start-date" class="label block-title">Дата начала:</label>
                 <div class="date-group">
-                    <input id="start-date" type="date" min="2000-01-01" class="input input-date">
-                    <input id="start-time" type="time" class="input input-date">
+                    <input id="start-date" class="input input-date" type="date" min="2000-01-01">
+                    <input id="start-time" class="input input-date" type="time">
                 </div>
             </div>
 
             <div class="input-group">
                 <label for="end-date" class="label block-title">Дата окончания:</label>
                 <div class="date-group">
-                    <input id="end-date" type="date" max="2100-01-01" class="input input-date">
-                    <input id="end-time" type="time" class="input input-date">
+                    <input id="end-date" class="input input-date" type="date" max="2100-01-01">
+                    <input id="end-time" class="input input-date" type="time">
                 </div>
             </div>
         </div>
@@ -58,6 +60,5 @@
     </div>
 </div>
 
-<script src="frontend/create-task.js"></script>
 </body>
 </html>
