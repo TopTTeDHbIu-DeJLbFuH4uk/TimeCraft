@@ -15,8 +15,8 @@
 
 .task-form {
     width: clamp(100px, 100%, 520px);
-    min-height: 620px;
-    max-height: 620px;
+    height: 523px;
+
     background: linear-gradient(135deg, #ff8c00, #fcbf49);
     border-radius: 8px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
@@ -45,43 +45,6 @@
     font-size: 18px;
 }
 
-.add-field-wrapper {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px;
-}
-
-.add-btn {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-
-    font-size: 12px;
-
-    transition: color .3s, transform .3s;
-    cursor: pointer;
-}
-
-.add-btn:hover {
-    transform: scale(1.05);
-}
-
-.add-btn::before {
-    content: '';
-    background: url("../assets/create_new_task/plus_icon.svg") no-repeat center;
-    width: 12px;
-    height: 12px;
-    fill: #5a3825;
-    filter: brightness(0) saturate(100%) invert(15%) sepia(42%) saturate(500%) hue-rotate(10deg);
-    transition: transform 0.2s, filter 0.3s;
-}
-
-.add-btn:hover::before {
-    transform: scale(1.2);
-    filter: brightness(0) saturate(100%) invert(40%) sepia(100%) saturate(500%) hue-rotate(30deg);
-}
-
 .close-icon {
     background: url("../assets/create_new_task/close_icon.svg") no-repeat center;
     width: 12px;
@@ -99,11 +62,14 @@
 }
 
 .task-details-container {
-    height: clamp(100px, 100%, 500px);
+    max-height: 406px;
+
     overflow: hidden;
     overflow-y: auto;
+
     scrollbar-width: thin;
     scrollbar-color: #4b7d5f #f4e1b2;
+
     padding: 10px;
 }
 
@@ -127,52 +93,79 @@
 }
 
 .input-task {
-    width: clamp(100px, 100%, 300px);
     height: 40px;
-    padding: 5px;
     border: 2px solid #ccc;
     border-radius: 6px;
     background: #fff;
+
+    padding: 5px;
+
     transition: border 0.3s, box-shadow 0.3s;
 }
+.input-date:hover,
 .input-task:hover {
     border-color: #c89666;
 }
+.input-date:focus,
 .input-task:focus {
     border-color: #a56a3a;
     box-shadow: 0 0 5px rgba(165, 106, 58, 0.5);
     outline: none;
 }
+.input-date::placeholder,
 .input-task::placeholder {
     color: #999;
     font-style: italic;
+}
+.input-date {
+    width: clamp(100px, 100%, 130px);
+    height: 40px;
+    border: 2px solid #ccc;
+    border-radius: 6px;
+    background: #fff;
+
+    padding: 5px;
+
+    transition: border 0.3s, box-shadow 0.3s;
 }
 
 .task-description {
     display: flex;
     flex-direction: column;
-    gap: 5px;
-    margin-bottom: 20px;
+    gap: 10px;
 }
-.task-description textarea {
+.description-field {
     resize: vertical;
-    width: 100%;
+
     border: 2px solid #ccc;
     border-radius: 6px;
     background: #fff;
+
     transition: border 0.3s, box-shadow 0.3s;
 }
-.task-description textarea:hover {
+.description-field:hover {
     border-color: #c89666;
 }
-.task-description textarea:focus {
+.description-field:focus {
     border-color: #a56a3a;
     box-shadow: 0 0 5px rgba(165, 106, 58, 0.5);
     outline: none;
 }
-.task-description textarea::placeholder {
+.description-field::placeholder {
     color: #999;
     font-style: italic;
+}
+
+.planned-date-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.date-container {
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
 
 .btn-container {

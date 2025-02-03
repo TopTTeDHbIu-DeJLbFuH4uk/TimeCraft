@@ -5,21 +5,20 @@
 .main-container {
     display: flex;
     flex-direction: column;
-    align-items: center;
     width: 100%;
     padding: 40px 20px;
 }
 
 .header {
     display: flex;
-    justify-content: center;
     flex-wrap: wrap;
-    width: clamp(100px, 100%, 800px);
-
+    width: 100%;
     margin-bottom: 20px;
 }
 
 .tasks {
+    display: block;
+    width: 100%;
     font-size: 28px;
 }
 
@@ -77,16 +76,21 @@
 /*------------------------------TABLE------------------------------*/
 
 .table-container {
+    display: block;
     width: 100%;
-    overflow-x: auto;
+    max-width: 100%;
+    max-height: 500px;
+
+    overflow: auto;
+
+    margin: 0 auto;
 }
 
 .table {
     border-collapse: collapse;
     table-layout: fixed;
     min-width: 800px;
-
-    margin: 0 auto;
+    width: 100%;
 }
 .table th,
 .table td {
@@ -106,4 +110,13 @@ table th:nth-child(1) {
 
 .checkbox {
     cursor: pointer;
+}
+
+.message {
+    display: inline-block;
+    text-align: center;
+
+    font-size: 28px;
+
+    padding-top: 30px;
 }

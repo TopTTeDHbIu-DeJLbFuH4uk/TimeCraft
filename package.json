@@ -2,7 +2,7 @@
   "name": "TimeCraft",
   "version": "1.0.0",
   "description": "",
-  "main": "frontend/index.js",
+  "main": "frontend/create-task.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

@@ -20,11 +20,7 @@
     <div class="task-form">
         <header class="task-header">
             <h1 class="header">Новая задача</h1>
-
-            <div class="add-field-wrapper">
-                <button class="add-btn add-field">Добавить поле</button>
-                <div class="close-icon"></div>
-            </div>
+            <div class="close-icon"></div>
         </header>
 
         <div class="task-details-container">
@@ -33,21 +29,35 @@
                     <label class="task-heading">Название задачи:</label>
                     <input type="text"
                            placeholder="Задача"
-                           class="input-task"
+                           class="input-task name-task-field content-in-input"
                     >
                 </div>
 
                 <div class="task-description">
                     <h2 class="task-heading">Описание:</h2>
-                    <textarea name="" id="" cols="3" rows="3"></textarea>
+                    <textarea name="" id="" cols="3" rows="3" class="description-field content-in-input"></textarea>
+                </div>
+
+                <div class="planned-date-container">
+                    <h3 class="task-heading">Дата начала:</h3>
+                    <div class="date-container">
+                        <input type="date" min="2000-01-01" class="input-date start-date content-in-input">
+                        <input type="time" class="input-date start-time content-in-input">
+                    </div>
+
+                    <h3 class="task-heading">Дата окончания:</h3>
+                    <div class="date-container">
+                        <input type="date" max="2100-01-01" class="input-date end-date content-in-input">
+                        <input type="time" class="input-date end-time content-in-input">
+                    </div>
                 </div>
             </div>
 
-            <div class="task-heading">Планируемая дата завершения:</div>
+
         </div>
 
         <footer class="btn-container">
-            <a href="list-of-tasks.html" class="btn btn-save">
+            <a href="#" class="btn btn-save">
                 <button>Сохранить</button>
             </a>
             <a href="list-of-tasks.html" class="btn btn-cancel">
@@ -57,6 +67,6 @@
     </div>
 </main>
 
-
+<script src="frontend/create-task.js"></script>
 </body>
 </html>
