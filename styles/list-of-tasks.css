@@ -29,9 +29,11 @@
     gap: 20px;
 }
 
-.change-task-btn button {
+.create-task-btn,
+.go-to-task-btn {
     display: flex;
     align-items: center;
+    justify-content: center;
 
     width: clamp(50px, 100%, 150px);
     height: 40px;
