@@ -38,15 +38,22 @@ const renderTask = task => {
     });
     tableBodyEl.append(tr);
 };
-const task = JSON.parse(localStorage.getItem('tasks'));
 
-const getTask = () => {
-    if (task === null) {
+const getTasks = () => {
+
+    return new Promise(res => {
+        setTimeout(() => {
+            const tasks = JSON.parse(localStorage.getItem('tasks'));
+            res(tasks);
+        }, 200);
+    });
+
+};
+getTasks().then(tasks => {
+    if (tasks === null) {
         message.classList.remove('hidden');
         return;
     }
     message.classList.add('hidden');
-
-    task.forEach(task => renderTask(task));
-};
-getTask();
+    tasks.forEach(task => renderTask(task))
+});

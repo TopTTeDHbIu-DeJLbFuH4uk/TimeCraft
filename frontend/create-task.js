@@ -37,13 +37,17 @@ const clickHandlerCreateTask = task => {
 };
 
 btnSaveEl.addEventListener('click', () => {
+    btnSaveEl.disabled = true;
+
     const task = {};
 
     inputEls.forEach(inputEl => {
         task[inputEl.id] = inputEl.value;
     });
 
-    clickHandlerCreateTask(task).then(() => window.location.href = 'list-of-tasks.html');
+    clickHandlerCreateTask(task)
+        .then(() => window.location.href = 'list-of-tasks.html')
+        .finally(() => btnSaveEl.disabled = false);
 });
 
 btnCancelEl.addEventListener('click', () => history.back());
