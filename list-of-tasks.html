@@ -12,7 +12,6 @@
     <link rel="icon" href="./assets/browser_tab/logo.svg">
     <!-- SCRIPTS -->
     <script defer src="frontend/render-task.js"></script>
-<!--    <script defer src="frontend/create-task.js"></script>-->
     <!-- STYLES -->
     <link rel="stylesheet" href="styles/main.css">
     <link rel="stylesheet" href="styles/list-of-tasks.css">
@@ -50,28 +49,17 @@
                 <th>
                     <input type="checkbox" class="checkbox">
                 </th>
-                <th>Название</th>
-                <th>Описание</th>
-                <th>Дата начала</th>
-                <th>Дата окончания</th>
+                <th data-id="title">Название</th>
+                <th data-id="description" >Описание</th>
+                <th data-id="startDate">Дата начала</th>
+                <th data-id="endDate">Дата окончания</th>
             </tr>
             </thead>
 
-            <tbody class="table-body">
-
-            <!--            <tr>-->
-            <!--                <th>-->
-            <!--                    <input type="checkbox" class="checkbox">-->
-            <!--                </th>-->
-            <!--                <th>console</th>-->
-            <!--                <th>log</th>-->
-            <!--                <th>02.02.2025</th>-->
-            <!--                <th>02.02.2026</th>-->
-            <!--            </tr>-->
-            </tbody>
+            <tbody class="table-body"></tbody>
         </table>
     </div>
-    <p class="message">У вас ещё нет задачи. Попробуйте создать новую.</p>
+    <div class="message">У вас ещё нет задачи. Попробуйте создать новую.</div>
 </main>
 
 </body>

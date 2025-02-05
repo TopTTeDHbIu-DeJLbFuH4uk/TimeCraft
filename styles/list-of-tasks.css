@@ -115,10 +115,8 @@ table th:nth-child(1) {
 }
 
 .message {
-    display: inline-block;
     text-align: center;
 
     font-size: 28px;
-
     padding-top: 30px;
 }

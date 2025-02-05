@@ -12,7 +12,7 @@ const hours = now.getHours().toString().padStart(2, '0');
 const minutes = now.getMinutes().toString().padStart(2, '0');
 startTimeEl.value = `${hours}:${minutes}`;
 
-// localStorage.clear();
+localStorage.clear();
 
 const clickHandlerCreateTask = task => {
 
@@ -43,9 +43,7 @@ btnSaveEl.addEventListener('click', () => {
         task[inputEl.id] = inputEl.value;
     });
 
-    clickHandlerCreateTask(task);
-
-    window.location.href = 'list-of-tasks.html';
+    clickHandlerCreateTask(task).then(() => window.location.href = 'list-of-tasks.html');
 });
 
 btnCancelEl.addEventListener('click', () => history.back());
