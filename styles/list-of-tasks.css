@@ -2,46 +2,40 @@
     color: #000000;
 }
 
-.main-container {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
+.container {
     padding: 40px 20px;
 }
 
 .title {
-    display: flex;
-    flex-wrap: wrap;
-    width: 100%;
-    margin-bottom: 20px;
-}
-
-.tasks {
-    display: block;
-    width: 100%;
     font-size: 28px;
+    margin-bottom: 10px;
 }
 
 .nav-container {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
-    gap: 20px;
+    gap: 10px;
+
+    margin-bottom: 20px;
 }
 
-.create-task-btn,
-.go-to-task-btn {
+.btn {
     display: flex;
     align-items: center;
     justify-content: center;
-
-    width: clamp(50px, 100%, 150px);
+    min-width: 80px;
     height: 40px;
-    background: linear-gradient(135deg, #ff8c00, #fcbf49);
 
     padding: 5px;
 
     cursor: pointer;
+}
+.go-to-task-btn,
+.create-task-btn {
+    background: linear-gradient(135deg, #ff8c00, #fcbf49);
+}
+.delete-btn {
+    background: linear-gradient(135deg, #ff4c4c, #ff0000);
 }
 
 .quick-search-container {
@@ -49,7 +43,6 @@
 }
 .quick-search-container::before {
     position: absolute;
-    z-index: 100;
     top: 10px;
     left: 5px;
 
@@ -60,15 +53,16 @@
 }
 
 .quick-search {
-    padding: 5px 5px 5px 20px;
+    padding: 5px 5px 5px 25px;
 }
 
-.select-by-container, p {
+.sorting-container, p {
     display: flex;
     align-items: center;
     gap: 10px;
 
     font-size: 18px;
+    color: #f2f2f2;
 }
 
 .select-by {
@@ -81,11 +75,9 @@
     display: block;
     width: 100%;
     max-width: 100%;
-    max-height: 500px;
+    max-height: 800px;
 
     overflow: auto;
-
-    margin: 0 auto;
 }
 
 .table {
@@ -94,6 +86,7 @@
     min-width: 800px;
     width: 100%;
 }
+
 .table th,
 .table td {
     border: 1px solid #ddd;
@@ -112,6 +105,10 @@ table th:nth-child(1) {
 
 .checkbox {
     cursor: pointer;
+}
+
+.table-body td {
+    color: #f2f2f2;
 }
 
 .message {

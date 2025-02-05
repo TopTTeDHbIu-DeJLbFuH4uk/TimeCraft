@@ -18,21 +18,22 @@
 </head>
 <body>
 
-<main class="main-container">
-    <header class="header">
-        <h1 class="tasks">Задачи</h1>
+<main class="container">
+    <header>
+        <h1 class="title">Задачи N</h1>
 
         <nav class="nav-container">
-            <button class="create-task-btn">Создать задачу</button>
-            <button class="go-to-task-btn">Перейти к задаче</button>
+            <button class="create-task-btn btn">Создать задачу</button>
+            <button class="go-to-task-btn btn">Перейти к задаче</button>
+            <button class="delete-btn btn">Удалить выбранные</button>
 
             <div class="quick-search-container">
-                <input type="text" placeholder="Поиск..." class="quick-search">
+                <input class="quick-search" type="text" placeholder="Поиск...">
             </div>
 
-            <div class="select-by-container">
+            <div class="sorting-container">
                 <p>Сортировать по:</p>
-                <select name="" id="select-by" class="select-by">
+                <select class="select-by" id="select-by">
                     <option value="">Выбрать</option>
                     <option value="">Названию</option>
                     <option value="">Дате</option>
@@ -50,7 +51,7 @@
                     <input type="checkbox" class="checkbox">
                 </th>
                 <th data-id="title">Название</th>
-                <th data-id="description" >Описание</th>
+                <th data-id="description">Описание</th>
                 <th data-id="startDate">Дата начала</th>
                 <th data-id="endDate">Дата окончания</th>
             </tr>
