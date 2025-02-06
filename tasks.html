@@ -31,6 +31,7 @@
             font-size: 40px;
             font-weight: 600;
         }
+
         .logo::before {
             content: '';
             background: url("./images/logo.svg") no-repeat center;
@@ -62,10 +63,12 @@
 
             cursor: pointer;
         }
+
         .go-to-task-btn,
         .create-task-btn {
             background: linear-gradient(135deg, #ff8c00, #fcbf49);
         }
+
         .delete-btn {
             background: linear-gradient(135deg, #ff4c4c, #ff0000);
         }
@@ -73,6 +76,7 @@
         .quick-search-container {
             position: relative;
         }
+
         .quick-search-container::before {
             position: absolute;
             top: 10px;
@@ -103,20 +107,23 @@
 
         /*------------------------------TABLE------------------------------*/
 
-        .table-container {
-            display: block;
-            width: 100%;
-            max-width: 100%;
-            max-height: 800px;
+        /*.table-container {*/
+        /*    display: block;*/
+        /*    width: 100%;*/
+        /*    max-width: 100%;*/
+        /*    max-height: 800px;*/
 
-            overflow: auto;
-        }
+        /*    overflow: auto;*/
+        /*}*/
 
         .table {
             border-collapse: collapse;
             table-layout: fixed;
+
             min-width: 800px;
             width: 100%;
+
+            overflow: auto;
         }
 
         .table th,
@@ -143,7 +150,7 @@
             color: #f2f2f2;
         }
 
-        .message {
+        .no-tasks-message {
             text-align: center;
 
             font-size: 28px;
@@ -159,27 +166,27 @@
         <h2 class="title">Задачи N</h2>
 
         <nav class="nav-container">
-            <button class="create-task-btn btn">Создать задачу</button>
-            <button class="go-to-task-btn btn">Перейти к задаче</button>
-            <button class="delete-btn btn">Удалить выбранные</button>
+            <button class="btn create-task-btn">Создать задачу</button>
+            <button class="btn go-to-task-btn">Перейти к задаче</button>
+            <button class="btn delete-btn">Удалить выбранные</button>
 
             <div class="quick-search-container">
                 <input class="quick-search" type="text" placeholder="Поиск...">
             </div>
 
             <div class="sorting-container">
-                <p>Сортировать по:</p>
+                <label for="select-by">Сортировать по:</label>
                 <select class="select-by" id="select-by">
-                    <option value="">Выбрать</option>
-                    <option value="">Названию</option>
-                    <option value="">Дате</option>
-                    <option value="">Времени</option>
+                    <option value="" disabled selected>Выбрать</option>
+                    <option value="name">Названию</option>
+                    <option value="date">Дате</option>
+                    <option value="time">Времени</option>
                 </select>
             </div>
         </nav>
     </header>
 
-    <div class="table-container">
+<!--    <div class="table-container">-->
         <table class="table">
             <thead>
             <tr class="table-header">
@@ -195,8 +202,8 @@
 
             <tbody class="table-body"></tbody>
         </table>
-    </div>
-    <div class="message">У вас ещё нет задачи. Попробуйте создать новую.</div>
+<!--    </div>-->
+    <div class="no-tasks-message">У вас ещё нет задачи. Попробуйте создать новую.</div>
 </main>
 
 <script>
@@ -205,55 +212,52 @@
 
     const tableBodyEl = document.querySelector('.table-body');
     const thEls = [...document.querySelectorAll('th')];
-    const messageEl = document.querySelector('.message');
+    const messageEl = document.querySelector('.no-tasks-message');
 
     const renderTask = task => {
-        const tr = document.createElement('tr');
+        const trEl = document.createElement('tr');
 
         thEls.forEach((thEl, index) => {
-            const td = document.createElement('td');
+            const tdEl = document.createElement('td');
 
             if (index === 0) {
-                const input = document.createElement('input');
-                input.type = 'checkbox';
-                input.classList.add('checkbox');
+                const inputEl = document.createElement('input');
+                inputEl.type = 'checkbox';
+                inputEl.classList.add('checkbox');
 
-                tr.append(td);
-                td.append(input);
-
+                tdEl.append(inputEl);
             } else {
-                const key = thEl.dataset.id;
-
-                if (key === 'startDate') {
-                    td.innerText = `${task.startDate} ${task.startTime}`;
-                    tr.append(td);
-
-                } else if (key === 'endDate') {
-                    td.innerText = `${task.endDate} ${task.endTime}`;
-                    tr.append(td);
-
-                } else {
-                    td.innerText = task[key];
-                    tr.append(td);
-                }
+                tdEl.innerText = (() => {
+                    switch (thEl.dataset.id) {
+                        case 'startDate':
+                            return `${task.startDate} ${task.startTime}`;
+                        case 'endDate':
+                            return `${task.endDate} ${task.endTime}`;
+                        default:
+                            return task[thEl.dataset.id];
+                    }
+                })();
             }
+            trEl.append(tdEl);
         });
-        tableBodyEl.append(tr);
+        tableBodyEl.append(trEl);
     };
 
     const getTasks = () => {
-        return new Promise(res => {
+        return new Promise((resolve, reject) => {
             setTimeout(() => {
                 const tasks = JSON.parse(localStorage.getItem('tasks'));
-                res(tasks);
+                resolve(tasks);
             }, 200);
         });
     };
 
     getTasks().then(tasks => {
         if (tasks !== null) {
-            messageEl.classList.toggle('hidden');
+            messageEl.classList.add('hidden');
             tasks.forEach(task => renderTask(task));
+        } else {
+            messageEl.classList.remove('hidden');
         }
     });
 </script>
