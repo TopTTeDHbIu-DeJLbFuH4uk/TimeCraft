@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap');
+    </style>
+    <title>TimeCraft</title>
+    <link rel="icon" href="images/logo.svg">
+    <!-- STYLES -->
+    <link rel="stylesheet" href="styles/main.css">
+
+    <style>
+        * {
+            color: #000000;
+        }
+
+        .container {
+            padding: 40px 20px;
+        }
+
+        .logo {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+
+            font-size: 40px;
+            font-weight: 600;
+        }
+        .logo::before {
+            content: '';
+            background: url("./images/logo.svg") no-repeat center;
+            width: 50px;
+            height: 50px;
+        }
+
+        .title {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .nav-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 80px;
+            height: 40px;
+
+            padding: 5px;
+
+            cursor: pointer;
+        }
+        .go-to-task-btn,
+        .create-task-btn {
+            background: linear-gradient(135deg, #ff8c00, #fcbf49);
+        }
+        .delete-btn {
+            background: linear-gradient(135deg, #ff4c4c, #ff0000);
+        }
+
+        .quick-search-container {
+            position: relative;
+        }
+        .quick-search-container::before {
+            position: absolute;
+            top: 10px;
+            left: 5px;
+
+            content: '';
+            background: url("./images/search.svg") no-repeat center;
+            width: 18px;
+            height: 18px;
+        }
+
+        .quick-search {
+            padding: 5px 5px 5px 25px;
+        }
+
+        .sorting-container, p {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            font-size: 18px;
+            color: #f2f2f2;
+        }
+
+        .select-by {
+            cursor: pointer;
+        }
+
+        /*------------------------------TABLE------------------------------*/
+
+        .table-container {
+            display: block;
+            width: 100%;
+            max-width: 100%;
+            max-height: 800px;
+
+            overflow: auto;
+        }
+
+        .table {
+            border-collapse: collapse;
+            table-layout: fixed;
+            min-width: 800px;
+            width: 100%;
+        }
+
+        .table th,
+        .table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .table-header th {
+            background-color: #f4f4f4;
+            font-weight: bold;
+        }
+
+        table th:nth-child(1) {
+            width: 40px;
+        }
+
+        .checkbox {
+            cursor: pointer;
+        }
+
+        .table-body td {
+            color: #f2f2f2;
+        }
+
+        .message {
+            text-align: center;
+
+            font-size: 28px;
+            padding-top: 30px;
+        }
+    </style>
+</head>
+<body>
+
+<main class="container">
+    <header>
+        <h1 class="logo">TimeCraft</h1>
+        <h2 class="title">Задачи N</h2>
+
+        <nav class="nav-container">
+            <button class="create-task-btn btn">Создать задачу</button>
+            <button class="go-to-task-btn btn">Перейти к задаче</button>
+            <button class="delete-btn btn">Удалить выбранные</button>
+
+            <div class="quick-search-container">
+                <input class="quick-search" type="text" placeholder="Поиск...">
+            </div>
+
+            <div class="sorting-container">
+                <p>Сортировать по:</p>
+                <select class="select-by" id="select-by">
+                    <option value="">Выбрать</option>
+                    <option value="">Названию</option>
+                    <option value="">Дате</option>
+                    <option value="">Времени</option>
+                </select>
+            </div>
+        </nav>
+    </header>
+
+    <div class="table-container">
+        <table class="table">
+            <thead>
+            <tr class="table-header">
+                <th>
+                    <input type="checkbox" class="checkbox">
+                </th>
+                <th data-id="title">Название</th>
+                <th data-id="description">Описание</th>
+                <th data-id="startDate">Дата начала</th>
+                <th data-id="endDate">Дата окончания</th>
+            </tr>
+            </thead>
+
+            <tbody class="table-body"></tbody>
+        </table>
+    </div>
+    <div class="message">У вас ещё нет задачи. Попробуйте создать новую.</div>
+</main>
+
+<script>
+    const createTaskBtnEl = document.querySelector('.create-task-btn');
+    createTaskBtnEl.addEventListener('click', () => window.location.href = 'task-create.html');
+
+    const tableBodyEl = document.querySelector('.table-body');
+    const thEls = [...document.querySelectorAll('th')];
+    const messageEl = document.querySelector('.message');
+
+    const renderTask = task => {
+        const tr = document.createElement('tr');
+
+        thEls.forEach((thEl, index) => {
+            const td = document.createElement('td');
+
+            if (index === 0) {
+                const input = document.createElement('input');
+                input.type = 'checkbox';
+                input.classList.add('checkbox');
+
+                tr.append(td);
+                td.append(input);
+
+            } else {
+                const key = thEl.dataset.id;
+
+                if (key === 'startDate') {
+                    td.innerText = `${task.startDate} ${task.startTime}`;
+                    tr.append(td);
+
+                } else if (key === 'endDate') {
+                    td.innerText = `${task.endDate} ${task.endTime}`;
+                    tr.append(td);
+
+                } else {
+                    td.innerText = task[key];
+                    tr.append(td);
+                }
+            }
+        });
+        tableBodyEl.append(tr);
+    };
+
+    const getTasks = () => {
+        return new Promise(res => {
+            setTimeout(() => {
+                const tasks = JSON.parse(localStorage.getItem('tasks'));
+                res(tasks);
+            }, 200);
+        });
+    };
+
+    getTasks().then(tasks => {
+        if (tasks !== null) {
+            messageEl.classList.toggle('hidden');
+            tasks.forEach(task => renderTask(task));
+        }
+    });
+</script>
+</body>
+</html>
