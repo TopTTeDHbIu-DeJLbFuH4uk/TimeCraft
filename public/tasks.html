@@ -186,29 +186,29 @@
         </nav>
     </header>
 
-<!--    <div class="table-container">-->
-        <table class="table">
-            <thead>
-            <tr class="table-header">
-                <th>
-                    <input type="checkbox" class="checkbox">
-                </th>
-                <th data-id="title">Название</th>
-                <th data-id="description">Описание</th>
-                <th data-id="startDate">Дата начала</th>
-                <th data-id="endDate">Дата окончания</th>
-            </tr>
-            </thead>
+    <!--    <div class="table-container">-->
+    <table class="table">
+        <thead>
+        <tr class="table-header">
+            <th>
+                <input type="checkbox" class="checkbox">
+            </th>
+            <th data-id="title">Название</th>
+            <th data-id="description">Описание</th>
+            <th data-id="startDate">Дата начала</th>
+            <th data-id="endDate">Дата окончания</th>
+        </tr>
+        </thead>
 
-            <tbody class="table-body"></tbody>
-        </table>
-<!--    </div>-->
+        <tbody class="table-body"></tbody>
+    </table>
+    <!--    </div>-->
     <div class="no-tasks-message">У вас ещё нет задачи. Попробуйте создать новую.</div>
 </main>
 
 <script>
     const createTaskBtnEl = document.querySelector('.create-task-btn');
-    createTaskBtnEl.addEventListener('click', () => window.location.href='task-create.html');
+    createTaskBtnEl.addEventListener('click', () => window.location.href = 'task-create');
 
     const tableBodyEl = document.querySelector('.table-body');
     const thEls = [...document.querySelectorAll('th')];
@@ -244,18 +244,14 @@
     };
 
     const getTasks = () => {
-        return new Promise((resolve, reject) => {
-            setTimeout(() => {
-                const tasks = JSON.parse(localStorage.getItem('tasks'));
-                resolve(tasks);
-            }, 200);
-        });
+        return fetch('http://localhost:3000/tasks').then(res =>
+            res.json());
     };
 
     getTasks().then(tasks => {
         if (tasks !== null) {
             messageEl.classList.add('hidden');
-            tasks.forEach(task => renderTask(task));
+            tasks.forEach(task => renderTask(task.task));
         } else {
             messageEl.classList.remove('hidden');
         }

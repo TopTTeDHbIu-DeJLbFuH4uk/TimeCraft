@@ -75,6 +75,7 @@
 
             cursor: pointer;
         }
+
         .close:hover {
             transform: rotate(90deg) scale(1.2);
             filter: brightness(0) saturate(100%) invert(50%) sepia(80%) saturate(500%) hue-rotate(350deg);
@@ -99,6 +100,7 @@
         .block-title {
             margin-bottom: 5px;
         }
+
         .label {
             font-weight: 500;
             color: #5a3825;
@@ -123,17 +125,20 @@
         .input:hover {
             border-color: #c89666;
         }
+
         .input-date:focus,
         .input:focus {
             border-color: #a56a3a;
             box-shadow: 0 0 5px rgba(165, 106, 58, 0.5);
             outline: none;
         }
+
         .input-date::placeholder,
         .input::placeholder {
             color: #999;
             font-style: italic;
         }
+
         .input-date {
             width: clamp(100px, 100%, 140px);
         }
@@ -149,6 +154,7 @@
 
             transition: border 0.3s, box-shadow 0.3s;
         }
+
         #description:hover {
             border-color: #c89666;
         }
@@ -195,6 +201,7 @@
             background-color: #4a7c50;
             border: 1px solid #4a7c50;
         }
+
         .btn-save:hover {
             background-color: #6a9f6b;
             border-color: #6a9f6b;
@@ -204,6 +211,7 @@
             background-color: #d98f5b;
             border: 1px solid #d98f5b;
         }
+
         .btn-cancel:hover {
             background-color: #b77a45;
             border-color: #b77a45;
@@ -269,26 +277,16 @@
     const minutes = now.getMinutes().toString().padStart(2, '0');
     startTimeEl.value = `${hours}:${minutes}`;
 
-    // localStorage.clear();
-
     const clickHandlerCreateTask = task => {
 
-        return new Promise((resolve, reject) => {
-            setTimeout(() => {
-                const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
-
-                task = {
-                    ...task,
-                    id: tasks.length + 1,
-                    creationDatetime: new Date().toISOString(),
-                };
-
-                tasks.push(task);
-
-                localStorage.setItem('tasks', JSON.stringify(tasks));
-
-                resolve({id: task.id, creationDatetime: task.creationDatetime});
-            }, 200);
+        return fetch('http://localhost:3000/task-create', {
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json',
+            },
+            body: JSON.stringify({
+                ...task,
+            }),
         });
 
     };
@@ -303,7 +301,8 @@
         });
 
         clickHandlerCreateTask(task).then(() => {
-            window.location.href = 'tasks.html';
+            console.log('osdf');
+            window.location.href = '/';
         });
 
     });
