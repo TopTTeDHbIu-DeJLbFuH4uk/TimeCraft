@@ -6,8 +6,9 @@ const app = express();
 
 app.use(express.static('public'));
 app.use(express.json());
+app.listen(PORT, () => console.log(`SERVER STARTED ON PORT ${PORT}`));
 
-const tasks = [];
+let tasks = [];
 
 app.get('/', (req, res) => {
     res.sendFile(path.resolve('public/tasks.html'));
@@ -21,18 +22,21 @@ app.get('/task-create', (req, res) => {
     res.sendFile(path.resolve('public/task-create.html'));
 });
 
-app.listen(PORT, () => console.log(`SERVER STARTED ON PORT ${PORT}`));
-
 app.post('/task-create', (req, res) => {
-    req.body = {
-        task: {
-            ...req.body,
-            creationDatetime: new Date().toISOString(),
-            id: tasks.length + 1,
-        }
-    };
-
-    tasks.push(req.body);
+    const task = {
+        ...req.body,
+        creationDatetime: new Date().toISOString(),
+        id: tasks.length + 1,
+    }
+    tasks.push(task);
 
     res.status(200).json(req.body);
+});
+
+app.delete('/tasks', (req, res) => {
+    const selectedTasksId = req.body.map(id => parseInt(id));
+
+    tasks = tasks.filter(task => !selectedTasksId.includes(task.id));
+
+    res.status(200).json(tasks);
 });

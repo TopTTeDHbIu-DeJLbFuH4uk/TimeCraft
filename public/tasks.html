@@ -142,6 +142,7 @@
             width: 40px;
         }
 
+        .header-checkbox,
         .checkbox {
             cursor: pointer;
         }
@@ -191,7 +192,7 @@
         <thead>
         <tr class="table-header">
             <th>
-                <input type="checkbox" class="checkbox">
+                <input type="checkbox" class="header-checkbox">
             </th>
             <th data-id="title">Название</th>
             <th data-id="description">Описание</th>
@@ -210,9 +211,14 @@
     const createTaskBtnEl = document.querySelector('.create-task-btn');
     createTaskBtnEl.addEventListener('click', () => window.location.href = 'task-create');
 
+    const deleteBtnEl = document.querySelector('.delete-btn');
+    deleteBtnEl.addEventListener('click', () => deleteTasks());
+
+    const headerCheckboxEl = document.querySelector('.header-checkbox');
+
     const tableBodyEl = document.querySelector('.table-body');
     const thEls = [...document.querySelectorAll('th')];
-    const messageEl = document.querySelector('.no-tasks-message');
+    const noTasksMessageEl = document.querySelector('.no-tasks-message');
 
     const renderTask = task => {
         const trEl = document.createElement('tr');
@@ -222,8 +228,9 @@
 
             if (index === 0) {
                 const inputEl = document.createElement('input');
-                inputEl.type = 'checkbox';
                 inputEl.classList.add('checkbox');
+                inputEl.setAttribute('data-id', task.id);
+                inputEl.type = 'checkbox';
 
                 tdEl.append(inputEl);
             } else {
@@ -244,18 +251,59 @@
     };
 
     const getTasks = () => {
-        return fetch('http://localhost:3000/tasks').then(res =>
-            res.json());
+        return fetch('/tasks').then(res => {
+            return res.json();
+        });
     };
 
     getTasks().then(tasks => {
-        if (tasks !== null) {
-            messageEl.classList.add('hidden');
-            tasks.forEach(task => renderTask(task.task));
-        } else {
-            messageEl.classList.remove('hidden');
+        if (tasks.length !== 0 && tasks !== null) {
+            console.log('asd')
+            noTasksMessageEl.classList.add('hidden');
+            tasks.forEach(task => renderTask(task));
+
+            selectAllTasks();
+            return;
         }
+        noTasksMessageEl.classList.remove('hidden');
     });
+
+    const selectAllTasks = () => {
+        const checkboxEls = [...document.querySelectorAll('.checkbox')];
+
+        headerCheckboxEl.addEventListener('change', () => {
+            checkboxEls.forEach(checkboxEl => checkboxEl.checked = headerCheckboxEl.checked)
+        });
+    };
+
+    const deleteTasks = () => {
+        const checkboxCheckedEls = [...document.querySelectorAll('.checkbox:checked')];
+        const selectedTasksId = checkboxCheckedEls.map(checkboxEl => checkboxEl.dataset.id);
+
+        if (selectedTasksId.length !== 0) {
+            fetch('/tasks', {
+                method: 'DELETE',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(selectedTasksId),
+
+            }).then(() => {
+                getTasks().then(tasks => {
+                    resetOptions(tasks);
+
+                    if (tasks.length !== 0) {
+                        noTasksMessageEl.classList.add('hidden');
+                        tasks.forEach(task => renderTask(task));
+                    }
+                    noTasksMessageEl.classList.remove('hidden');
+                });
+            });
+        }
+    };
+
+    const resetOptions = () => {
+        tableBodyEl.innerText = '';
+        headerCheckboxEl.checked = false;
+    };
 </script>
 </body>
 </html>
