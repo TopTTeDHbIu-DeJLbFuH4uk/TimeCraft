@@ -1,18 +1,21 @@
 {
-  "name": "TimeCraft",
+  "homepage": "https://TopTTeDHbIu-DeJLbFuH4uk.github.io/TimeCraft",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "type": "module",
   "scripts": {
     "start": "node server.js",
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "private": true,
   "dependencies": {
     "express": "^4.21.2"
   },
   "devDependencies": {
+    "gh-pages": "^6.3.0",
     "nodemon": "^3.1.9"
   }
 }

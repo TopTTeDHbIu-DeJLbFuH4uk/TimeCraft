@@ -34,9 +34,14 @@ app.post('/task-create', (req, res) => {
 });
 
 app.delete('/tasks', (req, res) => {
-    const selectedTasksId = req.body.map(id => parseInt(id));
+    const {selectedTaskIds} = req.body;
 
-    tasks = tasks.filter(task => !selectedTasksId.includes(task.id));
+    selectedTaskIds.forEach(id => {
+        const index = tasks.findIndex(task => task.id === parseInt(id));
+        if (index !== -1) {
+            tasks.splice(index, 1);
+        }
+    });
 
     res.status(200).json(tasks);
 });

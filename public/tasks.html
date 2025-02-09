@@ -222,6 +222,7 @@
 
     const renderTask = task => {
         const trEl = document.createElement('tr');
+        trEl.classList.add('row');
 
         thEls.forEach((thEl, index) => {
             const tdEl = document.createElement('td');
@@ -258,7 +259,6 @@
 
     getTasks().then(tasks => {
         if (tasks.length !== 0 && tasks !== null) {
-            console.log('asd')
             noTasksMessageEl.classList.add('hidden');
             tasks.forEach(task => renderTask(task));
 
@@ -278,32 +278,35 @@
 
     const deleteTasks = () => {
         const checkboxCheckedEls = [...document.querySelectorAll('.checkbox:checked')];
-        const selectedTasksId = checkboxCheckedEls.map(checkboxEl => checkboxEl.dataset.id);
+        const selectedTaskIds = checkboxCheckedEls.map(checkboxEl => checkboxEl.dataset.id);
 
-        if (selectedTasksId.length !== 0) {
+        if (selectedTaskIds.length !== 0) {
             fetch('/tasks', {
                 method: 'DELETE',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(selectedTasksId),
+                body: JSON.stringify({selectedTaskIds}),
 
-            }).then(() => {
-                getTasks().then(tasks => {
-                    resetOptions(tasks);
+            }).then(response => {
+                return response.json();
 
-                    if (tasks.length !== 0) {
-                        noTasksMessageEl.classList.add('hidden');
-                        tasks.forEach(task => renderTask(task));
-                    }
-                    noTasksMessageEl.classList.remove('hidden');
-                });
+            }).then(tasks => {
+                const rowEls = [...document.querySelectorAll('.row')];
+                console.log(tasks);
+                if (!tasks.length) {
+                    tableBodyEl.innerText = '';
+                } else {
+                    const parseToNumberTaskIds = selectedTaskIds.map(taskId => parseInt(taskId));
+                    // console.log(parseToNumberTaskIds); // [3, 4]
+                    // console.log(tasks);
+                    const filteredDeleteTasks = tasks.filter(task => console.log(task.id));
+                    // filteredDeleteTasks.forEach(deleteTask => {
+
+                }
+                headerCheckboxEl.checked = false;
             });
         }
     };
 
-    const resetOptions = () => {
-        tableBodyEl.innerText = '';
-        headerCheckboxEl.checked = false;
-    };
 </script>
 </body>
 </html>
