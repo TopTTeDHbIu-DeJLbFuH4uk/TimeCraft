@@ -9,6 +9,7 @@ app.use(express.json());
 app.listen(PORT, () => console.log(`SERVER STARTED ON PORT ${PORT}`));
 
 let tasks = [];
+let taskIds = [];
 
 app.get('/', (req, res) => {
     res.sendFile(path.resolve('public/tasks.html'));
@@ -23,14 +24,19 @@ app.get('/task-create', (req, res) => {
 });
 
 app.post('/task-create', (req, res) => {
-    const task = {
-        ...req.body,
+    const addTimeAndIdToTask = {
         creationDatetime: new Date().toISOString(),
-        id: tasks.length + 1,
+        id: taskIds.length + 1,
+    }
+
+    const task = {
+        ...req.body.task,
+        ...addTimeAndIdToTask,
     }
     tasks.push(task);
+    taskIds.push(null);
 
-    res.status(200).json(req.body);
+    res.status(200).json(addTimeAndIdToTask);
 });
 
 app.delete('/tasks', (req, res) => {
@@ -43,5 +49,5 @@ app.delete('/tasks', (req, res) => {
         }
     });
 
-    res.status(200).json(tasks);
+    res.status(200).json();
 });

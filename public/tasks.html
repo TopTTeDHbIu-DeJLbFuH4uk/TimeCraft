@@ -187,23 +187,23 @@
         </nav>
     </header>
 
-    <!--    <div class="table-container">-->
-    <table class="table">
-        <thead>
-        <tr class="table-header">
-            <th>
-                <input type="checkbox" class="header-checkbox">
-            </th>
-            <th data-id="title">Название</th>
-            <th data-id="description">Описание</th>
-            <th data-id="startDate">Дата начала</th>
-            <th data-id="endDate">Дата окончания</th>
-        </tr>
-        </thead>
+    <div class="table-container">
+        <table class="table">
+            <thead>
+            <tr class="table-header">
+                <th>
+                    <input type="checkbox" class="header-checkbox">
+                </th>
+                <th data-id="title">Название</th>
+                <th data-id="description">Описание</th>
+                <th data-id="startDate">Дата начала</th>
+                <th data-id="endDate">Дата окончания</th>
+            </tr>
+            </thead>
 
-        <tbody class="table-body"></tbody>
-    </table>
-    <!--    </div>-->
+            <tbody class="table-body"></tbody>
+        </table>
+    </div>
     <div class="no-tasks-message">У вас ещё нет задачи. Попробуйте создать новую.</div>
 </main>
 
@@ -258,11 +258,9 @@
     };
 
     getTasks().then(tasks => {
-        if (tasks.length !== 0 && tasks !== null) {
+        if (tasks.length && tasks !== null) {
             noTasksMessageEl.classList.add('hidden');
             tasks.forEach(task => renderTask(task));
-
-            selectAllTasks();
             return;
         }
         noTasksMessageEl.classList.remove('hidden');
@@ -270,42 +268,31 @@
 
     const selectAllTasks = () => {
         const checkboxEls = [...document.querySelectorAll('.checkbox')];
-
-        headerCheckboxEl.addEventListener('change', () => {
-            checkboxEls.forEach(checkboxEl => checkboxEl.checked = headerCheckboxEl.checked)
-        });
+        checkboxEls.forEach(checkboxEl => checkboxEl.checked = headerCheckboxEl.checked)
     };
+    headerCheckboxEl.addEventListener('change', () => selectAllTasks());
 
     const deleteTasks = () => {
         const checkboxCheckedEls = [...document.querySelectorAll('.checkbox:checked')];
         const selectedTaskIds = checkboxCheckedEls.map(checkboxEl => checkboxEl.dataset.id);
 
-        if (selectedTaskIds.length !== 0) {
-            fetch('/tasks', {
-                method: 'DELETE',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({selectedTaskIds}),
+        if (!selectedTaskIds.length) return;
+        fetch('/tasks', {
+            method: 'DELETE',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({selectedTaskIds}),
 
-            }).then(response => {
-                return response.json();
+        }).then(() => {
 
-            }).then(tasks => {
-                const rowEls = [...document.querySelectorAll('.row')];
-                console.log(tasks);
-                if (!tasks.length) {
-                    tableBodyEl.innerText = '';
-                } else {
-                    const parseToNumberTaskIds = selectedTaskIds.map(taskId => parseInt(taskId));
-                    // console.log(parseToNumberTaskIds); // [3, 4]
-                    // console.log(tasks);
-                    const filteredDeleteTasks = tasks.filter(task => console.log(task.id));
-                    // filteredDeleteTasks.forEach(deleteTask => {
-
-                }
-                headerCheckboxEl.checked = false;
+            checkboxCheckedEls.forEach(checkboxEl => {
+                checkboxEl.closest('.row').remove();
             });
-        }
-    };
+
+            const rowEls = [...document.querySelectorAll('.row')];
+            if (!rowEls.length) noTasksMessageEl.classList.remove('hidden');
+            headerCheckboxEl.checked = false;
+        });
+    }
 
 </script>
 </body>

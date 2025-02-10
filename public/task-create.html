@@ -283,7 +283,7 @@
             headers: {
                 'Content-type': 'application/json',
             },
-            body: JSON.stringify(task),
+            body: JSON.stringify({task}),
         });
     };
 
@@ -296,12 +296,18 @@
             task[inputEl.id] = inputEl.value;
         });
 
-        clickHandlerCreateTask(task).then(() => {
+        clickHandlerCreateTask(task).then(resolve => {
+            return resolve.json();
+
+        }).then(idAndTime => {
+            const newTask = {
+                ...idAndTime,
+                ...task,
+            }
+            console.log(newTask);
             window.location.href = '/';
         });
-
     });
-
     btnCancelEl.addEventListener('click', () => history.back());
 </script>
 </body>
