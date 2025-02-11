@@ -1,6 +1,16 @@
 import express from 'express';
 import path from 'path';
 
+// const {Client} = require('pg');
+// const client = new Client({
+//     user: 'TopTTeDHbIu-DeJLbFuH4uk',
+//     host: 'localhost',
+//     database: 'tasks',
+//     password: 'qwerty321',
+//     port: 5432,
+// });
+// client.connect();
+
 const PORT = 3000;
 const app = express();
 
@@ -43,7 +53,7 @@ app.delete('/tasks', (req, res) => {
     const {selectedTaskIds} = req.body;
 
     selectedTaskIds.forEach(id => {
-        const index = tasks.findIndex(task => task.id === parseInt(id));
+        const index = tasks.findIndex(task => task.id === id);
         if (index !== -1) {
             tasks.splice(index, 1);
         }

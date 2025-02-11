@@ -212,7 +212,6 @@
     createTaskBtnEl.addEventListener('click', () => window.location.href = 'task-create');
 
     const deleteBtnEl = document.querySelector('.delete-btn');
-    deleteBtnEl.addEventListener('click', () => deleteTasks());
 
     const headerCheckboxEl = document.querySelector('.header-checkbox');
 
@@ -230,7 +229,7 @@
             if (index === 0) {
                 const inputEl = document.createElement('input');
                 inputEl.classList.add('checkbox');
-                inputEl.setAttribute('data-id', task.id);
+                inputEl.taskId = task.id;
                 inputEl.type = 'checkbox';
 
                 tdEl.append(inputEl);
@@ -258,7 +257,7 @@
     };
 
     getTasks().then(tasks => {
-        if (tasks.length && tasks !== null) {
+        if (tasks?.length) {
             noTasksMessageEl.classList.add('hidden');
             tasks.forEach(task => renderTask(task));
             return;
@@ -266,17 +265,17 @@
         noTasksMessageEl.classList.remove('hidden');
     });
 
-    const selectAllTasks = () => {
+    headerCheckboxEl.addEventListener('change', () => {
         const checkboxEls = [...document.querySelectorAll('.checkbox')];
-        checkboxEls.forEach(checkboxEl => checkboxEl.checked = headerCheckboxEl.checked)
-    };
-    headerCheckboxEl.addEventListener('change', () => selectAllTasks());
+        checkboxEls.forEach(checkboxEl => checkboxEl.checked = headerCheckboxEl.checked);
+    });
 
-    const deleteTasks = () => {
+    deleteBtnEl.addEventListener('click', () => {
         const checkboxCheckedEls = [...document.querySelectorAll('.checkbox:checked')];
-        const selectedTaskIds = checkboxCheckedEls.map(checkboxEl => checkboxEl.dataset.id);
+        if (!checkboxCheckedEls.length) return;
 
-        if (!selectedTaskIds.length) return;
+        const selectedTaskIds = checkboxCheckedEls.map(checkboxEl => checkboxEl.taskId);
+
         fetch('/tasks', {
             method: 'DELETE',
             headers: {'Content-Type': 'application/json'},
@@ -292,7 +291,7 @@
             if (!rowEls.length) noTasksMessageEl.classList.remove('hidden');
             headerCheckboxEl.checked = false;
         });
-    }
+    });
 
 </script>
 </body>
