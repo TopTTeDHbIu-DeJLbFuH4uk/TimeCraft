@@ -212,8 +212,33 @@
     createTaskBtnEl.addEventListener('click', () => window.location.href = 'task-create');
 
     const deleteBtnEl = document.querySelector('.delete-btn');
+    deleteBtnEl.addEventListener('click', () => {
+        const checkboxCheckedEls = [...document.querySelectorAll('.checkbox:checked')];
+        if (!checkboxCheckedEls.length) return;
+
+        const selectedTaskIds = checkboxCheckedEls.map(checkboxEl => checkboxEl.taskId);
+
+        fetch('/tasks', {
+            method: 'DELETE',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({selectedTaskIds}),
+
+        }).then(() => {
+            checkboxCheckedEls.forEach(checkboxEl => {
+                checkboxEl.closest('.row').remove();
+            });
+
+            const rowEls = [...document.querySelectorAll('.row')];
+            if (!rowEls.length) noTasksMessageEl.classList.remove('hidden');
+            headerCheckboxEl.checked = false;
+        });
+    });
 
     const headerCheckboxEl = document.querySelector('.header-checkbox');
+    headerCheckboxEl.addEventListener('change', () => {
+        const checkboxEls = [...document.querySelectorAll('.checkbox')];
+        checkboxEls.forEach(checkboxEl => checkboxEl.checked = headerCheckboxEl.checked);
+    });
 
     const tableBodyEl = document.querySelector('.table-body');
     const thEls = [...document.querySelectorAll('th')];
@@ -249,48 +274,15 @@
         });
         tableBodyEl.append(trEl);
     };
-
     const getTasks = () => {
         return fetch('/tasks').then(res => {
             return res.json();
         });
     };
-
     getTasks().then(tasks => {
-        if (tasks?.length) {
-            noTasksMessageEl.classList.add('hidden');
-            tasks.forEach(task => renderTask(task));
-            return;
-        }
-        noTasksMessageEl.classList.remove('hidden');
-    });
-
-    headerCheckboxEl.addEventListener('change', () => {
-        const checkboxEls = [...document.querySelectorAll('.checkbox')];
-        checkboxEls.forEach(checkboxEl => checkboxEl.checked = headerCheckboxEl.checked);
-    });
-
-    deleteBtnEl.addEventListener('click', () => {
-        const checkboxCheckedEls = [...document.querySelectorAll('.checkbox:checked')];
-        if (!checkboxCheckedEls.length) return;
-
-        const selectedTaskIds = checkboxCheckedEls.map(checkboxEl => checkboxEl.taskId);
-
-        fetch('/tasks', {
-            method: 'DELETE',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({selectedTaskIds}),
-
-        }).then(() => {
-
-            checkboxCheckedEls.forEach(checkboxEl => {
-                checkboxEl.closest('.row').remove();
-            });
-
-            const rowEls = [...document.querySelectorAll('.row')];
-            if (!rowEls.length) noTasksMessageEl.classList.remove('hidden');
-            headerCheckboxEl.checked = false;
-        });
+        noTasksMessageEl.classList.toggle('hidden', tasks?.length);
+        if (!tasks?.length) return;
+        tasks.forEach(task => renderTask(task));
     });
 
 </script>

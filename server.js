@@ -16,7 +16,6 @@ const app = express();
 
 app.use(express.static('public'));
 app.use(express.json());
-app.listen(PORT, () => console.log(`SERVER STARTED ON PORT ${PORT}`));
 
 let tasks = [];
 let taskIds = [];
@@ -59,5 +58,7 @@ app.delete('/tasks', (req, res) => {
         }
     });
 
-    res.status(200).json();
+    res.sendStatus(200);
 });
+
+app.listen(PORT, () => console.log(`SERVER STARTED ON PORT ${PORT}`));
