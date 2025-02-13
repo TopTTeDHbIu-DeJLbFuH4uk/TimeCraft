@@ -196,8 +196,8 @@
                 </th>
                 <th data-id="title">Название</th>
                 <th data-id="description">Описание</th>
-                <th data-id="startDate">Дата начала</th>
-                <th data-id="endDate">Дата окончания</th>
+                <th data-id="start_datetime">Дата начала</th>
+                <th data-id="end_datetime">Дата окончания</th>
             </tr>
             </thead>
 
@@ -259,16 +259,30 @@
 
                 tdEl.append(inputEl);
             } else {
+                // tdEl.innerText = task[thEl.dataset.id];
                 tdEl.innerText = (() => {
                     switch (thEl.dataset.id) {
-                        case 'startDate':
-                            return `${task.startDate} ${task.startTime}`;
-                        case 'endDate':
-                            return `${task.endDate} ${task.endTime}`;
+                        case 'start_datetime':
+                            const startDatetime = task.start_datetime.replace('Т', ' ');
+                            console.log(startDatetime);
+                            return startDatetime.slice(0, 16);
+                        case 'end_datetime':
+                            return task.end_datetime.slice(0, 16);
                         default:
                             return task[thEl.dataset.id];
                     }
                 })();
+
+                // tdEl.innerText = (() => {
+                //     switch (thEl.dataset.id) {
+                //         case 'startDate':
+                //             return `${task.startDate} ${task.startTime}`;
+                //         case 'endDate':
+                //             return `${task.endDate} ${task.endTime}`;
+                //         default:
+                //             return task[thEl.dataset.id];
+                //     }
+                // })();
             }
             trEl.append(tdEl);
         });

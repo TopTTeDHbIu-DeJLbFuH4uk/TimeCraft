@@ -13,7 +13,7 @@ const pool = new Pool({
 });
 pool.connect()
     .then(client => {
-        return client.query('SELECT 1 FROM tasks LIMIT 1;')
+        return client.query('SELECT 1 FROM tasks LIMIT 1')
             .then(() => {
                 console.log('Connected to PostgreSQL and table "tasks" is accessible');
                 client.release();
@@ -37,29 +37,73 @@ app.get('/', (req, res) => {
     res.sendFile(path.resolve('public/tasks.html'));
 });
 
-app.get('/tasks', (req, res) => {
-    res.json(tasks);
+app.get('/tasks', async (req, res) => {
+    const getTasks = `
+        SELECT *
+        FROM tasks
+    `;
+
+    try {
+        const tasks = await pool.query(getTasks);
+        res.status(200).json(tasks.rows);
+    } catch (err) {
+        console.log(err);
+    }
 });
 
 app.get('/task-create', (req, res) => {
     res.sendFile(path.resolve('public/task-create.html'));
 });
 
-app.post('/task-create', (req, res) => {
+app.post('/task-create', async (req, res) => {
+    const {
+        title,
+        description,
+        startDate,
+        startTime,
+        endDate,
+        endTime,
+    } = req.body.task;
 
-    const start_datetime = {
-        start_datetime: `${req.body.task.startDate} ${req.body.task.startTime}`,
-    };
-    const end_datetime = {
-        end_datetime: `${req.body.task.endDate} ${req.body.task.endTime}`,
-    };
+    const creationDatetime = new Date().toISOString();
+    const startDatetime = new Date(`${startDate} ${startTime}`).toISOString();
+    const endDatetime = new Date(`${endDate} ${endTime}`).toISOString();
+
+    const createTask = `
+        INSERT INTO tasks (
+            creation_datetime, 
+            title, 
+            description,
+            start_datetime,
+            end_datetime
+        )
+        VALUES (
+            $1,
+            $2, 
+            $3, 
+            $4,
+            $5
+        )
+        RETURNING 
+            id, 
+            creation_datetime
+    ;`;
 
     try {
-        const result = pool.query(`INSERT INTO tasks (title, description, start_datetime, end_datetime)
-                                   VALUES ($1, $2, $3, $4) RETURNING id`,
-            [req.body.task.title, req.body.task.description, start_datetime, end_datetime]
-        );
-        res.status(201).json(result);
+        const createTaskRes = await pool.query(createTask, [
+            creationDatetime,
+            title,
+            description,
+            startDatetime,
+            endDatetime
+        ]);
+
+        const idAndTime = {
+            id: createTaskRes.rows[0].id,
+            creationDatetime: createTaskRes.rows[0].creation_datetime,
+        };
+
+        res.status(201).json(idAndTime);
 
     } catch (err) {
         console.log(err);
