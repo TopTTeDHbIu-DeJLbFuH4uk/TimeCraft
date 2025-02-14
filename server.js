@@ -40,11 +40,11 @@ app.get('/', (req, res) => {
 app.get('/tasks', async (req, response) => {
     const getTasks = `
         SELECT id,
-               creation_datetime,
-               title,
-               description,
-               start_datetime,
-               end_datetime
+            creation_datetime,
+            title,
+            description,
+            start_datetime,
+            end_datetime
         FROM tasks
     ;`;
 
@@ -74,18 +74,21 @@ app.post('/task-create', async (req, response) => {
 
     const createTask = `
         INSERT INTO tasks (
-                creation_datetime,
-                title,
-                description,
-                start_datetime,
-                end_datetime)
-        VALUES ($1,
-                $2,
-                $3,
-                $4,
-                $5) 
-            RETURNING id, 
-            creation_datetime
+            creation_datetime,
+            title,
+            description,
+            start_datetime,
+            end_datetime
+        )
+        VALUES (
+            $1,
+            $2,
+            $3,
+            $4,
+            $5
+        ) 
+        RETURNING id, 
+        creation_datetime
     ;`;
 
     const createTaskRes = await pool.query(createTask, [
