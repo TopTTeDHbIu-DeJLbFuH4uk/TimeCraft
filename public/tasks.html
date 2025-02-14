@@ -213,22 +213,22 @@
 
     const deleteBtnEl = document.querySelector('.delete-btn');
     deleteBtnEl.addEventListener('click', () => {
-        const checkboxCheckedEls = [...document.querySelectorAll('.checkbox:checked')];
+        const checkboxCheckedEls = [ ...document.querySelectorAll('.checkbox:checked') ];
         if (!checkboxCheckedEls.length) return;
 
         const selectedTaskIds = checkboxCheckedEls.map(checkboxEl => checkboxEl.taskId);
 
         fetch('/tasks', {
             method: 'DELETE',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({selectedTaskIds}),
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ selectedTaskIds }),
 
         }).then(() => {
             checkboxCheckedEls.forEach(checkboxEl => {
                 checkboxEl.closest('.row').remove();
             });
 
-            const rowEls = [...document.querySelectorAll('.row')];
+            const rowEls = [ ...document.querySelectorAll('.row') ];
             if (!rowEls.length) noTasksMessageEl.classList.remove('hidden');
             headerCheckboxEl.checked = false;
         });
@@ -236,12 +236,12 @@
 
     const headerCheckboxEl = document.querySelector('.header-checkbox');
     headerCheckboxEl.addEventListener('change', () => {
-        const checkboxEls = [...document.querySelectorAll('.checkbox')];
+        const checkboxEls = [ ...document.querySelectorAll('.checkbox') ];
         checkboxEls.forEach(checkboxEl => checkboxEl.checked = headerCheckboxEl.checked);
     });
 
     const tableBodyEl = document.querySelector('.table-body');
-    const thEls = [...document.querySelectorAll('th')];
+    const thEls = [ ...document.querySelectorAll('th') ];
     const noTasksMessageEl = document.querySelector('.no-tasks-message');
 
     const renderTask = task => {
@@ -259,38 +259,38 @@
 
                 tdEl.append(inputEl);
             } else {
-                // tdEl.innerText = task[thEl.dataset.id];
                 tdEl.innerText = (() => {
                     switch (thEl.dataset.id) {
                         case 'start_datetime':
-                            const startDatetime = task.start_datetime.replace('Т', ' ');
-                            console.log(startDatetime);
-                            return startDatetime.slice(0, 16);
+                            return new Intl.DateTimeFormat(navigator.language, {
+                                year: 'numeric',
+                                month: 'short',
+                                weekday: 'short',
+                                day: '2-digit',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                            }).format(new Date(task.start_datetime));
                         case 'end_datetime':
-                            return task.end_datetime.slice(0, 16);
+                            return new Intl.DateTimeFormat(navigator.language, {
+                                year: 'numeric',
+                                month: 'short',
+                                weekday: 'short',
+                                day: '2-digit',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                            }).format(new Date(task.end_datetime));
                         default:
                             return task[thEl.dataset.id];
                     }
                 })();
-
-                // tdEl.innerText = (() => {
-                //     switch (thEl.dataset.id) {
-                //         case 'startDate':
-                //             return `${task.startDate} ${task.startTime}`;
-                //         case 'endDate':
-                //             return `${task.endDate} ${task.endTime}`;
-                //         default:
-                //             return task[thEl.dataset.id];
-                //     }
-                // })();
             }
             trEl.append(tdEl);
         });
         tableBodyEl.append(trEl);
     };
     const getTasks = () => {
-        return fetch('/tasks').then(res => {
-            return res.json();
+        return fetch('/tasks').then(response => {
+            return response.json();
         });
     };
     getTasks().then(tasks => {
@@ -298,7 +298,6 @@
         if (!tasks?.length) return;
         tasks.forEach(task => renderTask(task));
     });
-
 </script>
 </body>
 </html>

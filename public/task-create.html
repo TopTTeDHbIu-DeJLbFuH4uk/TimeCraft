@@ -294,17 +294,14 @@
             task[inputEl.id] = inputEl.value;
         });
 
-        clickHandlerCreateTask(task).then(resolve => {
-            return resolve.json();
-
-        }).then(idAndTime => {
+        clickHandlerCreateTask(task).then(res => {
+            return res.json();
+        }).then(res => {
             const newTask = {
-                ...idAndTime,
+                ...res,
                 ...task,
             };
-            console.log(newTask);
-
-            // window.location.href = '/';
+            window.location.href = '/';
         });
     });
     btnCancelEl.addEventListener('click', () => history.back());

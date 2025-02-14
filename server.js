@@ -2,7 +2,7 @@ import express from 'express';
 import path from 'path';
 import pkg from 'pg';
 
-const {Pool} = pkg;
+const { Pool } = pkg;
 
 const pool = new Pool({
     user: 'TopTTeDHbIu-DeJLbFuH4uk',
@@ -37,25 +37,28 @@ app.get('/', (req, res) => {
     res.sendFile(path.resolve('public/tasks.html'));
 });
 
-app.get('/tasks', async (req, res) => {
+app.get('/tasks', async (req, response) => {
     const getTasks = `
-        SELECT *
+        SELECT id,
+               creation_datetime,
+               title,
+               description,
+               start_datetime,
+               end_datetime
         FROM tasks
-    `;
+    ;`;
 
-    try {
-        const tasks = await pool.query(getTasks);
-        res.status(200).json(tasks.rows);
-    } catch (err) {
-        console.log(err);
-    }
+    const getTasksRes = await pool.query(getTasks);
+    const res = getTasksRes.rows;
+
+    response.status(200).json(res);
 });
 
 app.get('/task-create', (req, res) => {
     res.sendFile(path.resolve('public/task-create.html'));
 });
 
-app.post('/task-create', async (req, res) => {
+app.post('/task-create', async (req, response) => {
     const {
         title,
         description,
@@ -66,61 +69,53 @@ app.post('/task-create', async (req, res) => {
     } = req.body.task;
 
     const creationDatetime = new Date().toISOString();
-    const startDatetime = new Date(`${startDate} ${startTime}`).toISOString();
-    const endDatetime = new Date(`${endDate} ${endTime}`).toISOString();
+    const startDatetime = new Date(`${ startDate } ${ startTime }`).toISOString();
+    const endDatetime = new Date(`${ endDate } ${ endTime }`).toISOString();
 
     const createTask = `
         INSERT INTO tasks (
-            creation_datetime, 
-            title, 
-            description,
-            start_datetime,
-            end_datetime
-        )
-        VALUES (
-            $1,
-            $2, 
-            $3, 
-            $4,
-            $5
-        )
-        RETURNING 
-            id, 
+                creation_datetime,
+                title,
+                description,
+                start_datetime,
+                end_datetime)
+        VALUES ($1,
+                $2,
+                $3,
+                $4,
+                $5) 
+            RETURNING id, 
             creation_datetime
     ;`;
 
-    try {
-        const createTaskRes = await pool.query(createTask, [
-            creationDatetime,
-            title,
-            description,
-            startDatetime,
-            endDatetime
-        ]);
+    const createTaskRes = await pool.query(createTask, [
+        creationDatetime,
+        title,
+        description,
+        startDatetime,
+        endDatetime
+    ]);
 
-        const idAndTime = {
-            id: createTaskRes.rows[0].id,
-            creationDatetime: createTaskRes.rows[0].creation_datetime,
-        };
+    const res = {
+        id: createTaskRes.rows[0].id,
+        creationDatetime: createTaskRes.rows[0].creation_datetime,
+    };
 
-        res.status(201).json(idAndTime);
-
-    } catch (err) {
-        console.log(err);
-    }
+    response.status(201).json(res);
 });
 
-app.delete('/tasks', (req, res) => {
-    const {selectedTaskIds} = req.body;
+app.delete('/tasks', async (req, response) => {
+    const { selectedTaskIds } = req.body;
+    const numericIds = selectedTaskIds.map(selectedTaskId => parseInt(selectedTaskId));
 
-    selectedTaskIds.forEach(id => {
-        const index = tasks.findIndex(task => task.id === id);
-        if (index !== -1) { // ?
-            tasks.splice(index, 1);
-        }
-    });
+    const query = `
+        DELETE
+        FROM tasks
+        WHERE id = ANY ($1)
+    ;`;
 
-    res.sendStatus(200);
+    await pool.query(query, [ numericIds ]);
+    response.sendStatus(200);
 });
 
-app.listen(PORT, () => console.log(`SERVER STARTED ON PORT ${PORT}`));
+app.listen(PORT, () => console.log(`SERVER STARTED ON PORT ${ PORT }`));
