@@ -51,7 +51,23 @@ app.get('/tasks', async (req, response) => {
     const getTasksRes = await pool.query(getTasks);
     const res = getTasksRes.rows;
 
-    response.status(200).json(res);
+    const tasks = res.map(({
+        id,
+        creation_datetime,
+        title,
+        description,
+        start_datetime,
+        end_datetime,
+    }) => ({
+        id,
+        creationDatetime: creation_datetime,
+        title,
+        description,
+        startDatetime: start_datetime,
+        endDatetime: end_datetime,
+    }));
+
+    response.status(200).json(tasks);
 });
 
 app.get('/task-create', (req, res) => {
