@@ -40,33 +40,18 @@ app.get('/', (req, res) => {
 app.get('/tasks', async (req, response) => {
     const getTasks = `
         SELECT id,
-            creation_datetime,
-            title,
-            description,
-            start_datetime,
-            end_datetime
+               creation_datetime,
+               title,
+               description,
+               start_datetime,
+               end_datetime
         FROM tasks
-    ;`;
+        ;`;
 
     const getTasksRes = await pool.query(getTasks);
     const res = getTasksRes.rows;
 
-    const tasks = res.map(({
-        id,
-        creation_datetime,
-        title,
-        description,
-        start_datetime,
-        end_datetime,
-    }) => ({
-        id,
-        creationDatetime: creation_datetime,
-        title,
-        description,
-        startDatetime: start_datetime,
-        endDatetime: end_datetime,
-    }));
-
+    const tasks = res.map(res => convertToCamelCase(res))
     response.status(200).json(tasks);
 });
 
@@ -89,23 +74,18 @@ app.post('/task-create', async (req, response) => {
     const endDatetime = new Date(`${ endDate } ${ endTime }`).toISOString();
 
     const createTask = `
-        INSERT INTO tasks (
-            creation_datetime,
-            title,
-            description,
-            start_datetime,
-            end_datetime
-        )
-        VALUES (
-            $1,
-            $2,
-            $3,
-            $4,
-            $5
-        ) 
-        RETURNING id, 
+        INSERT INTO tasks (creation_datetime,
+                           title,
+                           description,
+                           start_datetime,
+                           end_datetime)
+        VALUES ($1,
+                $2,
+                $3,
+                $4,
+                $5) RETURNING id, 
         creation_datetime
-    ;`;
+        ;`;
 
     const createTaskRes = await pool.query(createTask, [
         creationDatetime,
@@ -120,6 +100,8 @@ app.post('/task-create', async (req, response) => {
         creationDatetime: createTaskRes.rows[0].creation_datetime,
     };
 
+    console.log(res);
+
     response.status(201).json(res);
 });
 
@@ -131,10 +113,20 @@ app.delete('/tasks', async (req, response) => {
         DELETE
         FROM tasks
         WHERE id = ANY ($1)
-    ;`;
+        ;`;
 
     await pool.query(query, [ numericIds ]);
     response.sendStatus(200);
 });
+
+const convertToCamelCase = dataObject => {
+    const transformedObject = {};
+
+    for (let originalKey in dataObject) {
+        const camelCaseKey = originalKey.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
+        transformedObject[camelCaseKey] = dataObject[originalKey];
+    }
+    return transformedObject;
+};
 
 app.listen(PORT, () => console.log(`SERVER STARTED ON PORT ${ PORT }`));
