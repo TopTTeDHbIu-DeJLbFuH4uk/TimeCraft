@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { response } from 'express';
 import path from 'path';
 import pkg from 'pg';
 
@@ -33,8 +33,8 @@ const app = express();
 app.use(express.static('public'));
 app.use(express.json());
 
-app.get('/', (req, res) => {
-    res.sendFile(path.resolve('public/tasks.html'));
+app.get('/', (req, response) => {
+    response.sendFile(path.resolve('public/tasks.html'));
 });
 
 app.get('/tasks', async (req, response) => {
@@ -46,7 +46,7 @@ app.get('/tasks', async (req, response) => {
                start_datetime,
                end_datetime
         FROM tasks
-        ;`;
+    ;`;
 
     const getTasksRes = await pool.query(getTasks);
     const res = getTasksRes.rows;
@@ -55,8 +55,29 @@ app.get('/tasks', async (req, response) => {
     response.status(200).json(tasks);
 });
 
-app.get('/task-create', (req, res) => {
-    res.sendFile(path.resolve('public/task-create.html'));
+app.get('/tasks/:taskId', async (req, response) => {
+    const taskId = req.params.taskId;
+    const getTask = `
+        SELECT 
+            id,
+            creation_datetime,
+            title,
+            description,
+            start_datetime,
+            end_datetime
+        FROM tasks
+        WHERE id = ($1)
+    ;`;
+
+    const getTaskRes = await pool.query(getTask, [ taskId ]);
+    const res = getTaskRes.rows;
+
+    const task = res.map(res => convertToCamelCase(res));
+    response.status(200).json(task[0]);
+});
+
+app.get('/task-create', (req, response) => {
+    response.sendFile(path.resolve('public/task-create.html'));
 });
 
 app.post('/task-create', async (req, response) => {
@@ -103,6 +124,10 @@ app.post('/task-create', async (req, response) => {
     console.log(res);
 
     response.status(201).json(res);
+});
+
+app.get('/task-edit', (req, response) => {
+    response.sendFile(path.resolve('public/task-edit.html'));
 });
 
 app.delete('/tasks', async (req, response) => {

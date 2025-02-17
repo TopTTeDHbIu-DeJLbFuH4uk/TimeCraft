@@ -12,7 +12,6 @@
     <link rel="icon" href="images/logo.svg">
     <!-- STYLES -->
     <link rel="stylesheet" href="./styles/main.css">
-
     <style>
         * {
             color: #000000;
@@ -64,12 +63,21 @@
             cursor: pointer;
         }
 
-        .go-to-task-btn,
         .create-task-btn {
             background: linear-gradient(135deg, #ff8c00, #fcbf49);
         }
 
-        .delete-btn {
+        .edit-task-btn:disabled,
+        .delete-task-btn:disabled {
+            background-color: #999999;
+            cursor: default;
+        }
+
+        .edit-task-btn.active {
+            background: linear-gradient(135deg, #ff8c00, #fcbf49);
+        }
+
+        .delete-task-btn.active {
             background: linear-gradient(135deg, #ff4c4c, #ff0000);
         }
 
@@ -168,8 +176,8 @@
 
         <nav class="nav-container">
             <button class="btn create-task-btn">Создать задачу</button>
-            <button class="btn go-to-task-btn">Перейти к задаче</button>
-            <button class="btn delete-btn">Удалить выбранные</button>
+            <button class="btn edit-task-btn" disabled>Редактировать</button>
+            <button class="btn delete-task-btn" disabled>Удалить выбранные</button>
 
             <div class="quick-search-container">
                 <input class="quick-search" type="text" placeholder="Поиск...">
@@ -211,8 +219,18 @@
     const createTaskBtnEl = document.querySelector('.create-task-btn');
     createTaskBtnEl.addEventListener('click', () => window.location.href = 'task-create');
 
-    const deleteBtnEl = document.querySelector('.delete-btn');
-    deleteBtnEl.addEventListener('click', () => {
+    const editTaskBtnEl = document.querySelector('.edit-task-btn');
+    editTaskBtnEl.addEventListener('click', () => {
+        const checkboxCheckedEls = [ ...document.querySelectorAll('.checkbox:checked') ];
+        const checkboxCheckedEl = document.querySelector('.checkbox:checked');
+
+        if (checkboxCheckedEls.length !== 1) return;
+        const taskId = checkboxCheckedEl.taskId;
+        window.location.href = `task-edit?id=${ taskId }`;
+    });
+
+    const deleteTaskBtnEl = document.querySelector('.delete-task-btn');
+    deleteTaskBtnEl.addEventListener('click', () => {
         const checkboxCheckedEls = [ ...document.querySelectorAll('.checkbox:checked') ];
         if (!checkboxCheckedEls.length) return;
 
@@ -238,13 +256,33 @@
     headerCheckboxEl.addEventListener('change', () => {
         const checkboxEls = [ ...document.querySelectorAll('.checkbox') ];
         checkboxEls.forEach(checkboxEl => checkboxEl.checked = headerCheckboxEl.checked);
+        enableDisableButton();
     });
+
+    const getCheckboxes = () => {
+        const checkboxEls = [ ...document.querySelectorAll('.checkbox') ];
+        checkboxEls.forEach(checkboxEl => {
+            checkboxEl.addEventListener('change', enableDisableButton);
+        });
+    };
+
+    const enableDisableButton = () => {
+        const checkboxCheckedEls = [ ...document.querySelectorAll('.checkbox:checked') ];
+        const count = checkboxCheckedEls.length;
+
+        const toggleButton = (button, isActive) => {
+            button.disabled = !isActive;
+            button.classList.toggle('active', isActive);
+        }
+        toggleButton(deleteTaskBtnEl, count !== 0);
+        toggleButton(editTaskBtnEl, count === 1);
+    };
 
     const tableBodyEl = document.querySelector('.table-body');
     const thEls = [ ...document.querySelectorAll('th') ];
     const noTasksMessageEl = document.querySelector('.no-tasks-message');
 
-    const renderTask = task => {
+    const renderTasks = task => {
         const {
             id,
             creationDatetime,
@@ -263,7 +301,7 @@
             if (index === 0) {
                 const inputEl = document.createElement('input');
                 inputEl.classList.add('checkbox');
-                inputEl.taskId = task.id;
+                inputEl.taskId = id;
                 inputEl.type = 'checkbox';
 
                 tdEl.append(inputEl);
@@ -305,7 +343,8 @@
     getTasks().then(tasks => {
         noTasksMessageEl.classList.toggle('hidden', tasks?.length);
         if (!tasks?.length) return;
-        tasks.forEach(task => renderTask(task));
+        tasks.forEach(task => renderTasks(task));
+        getCheckboxes();
     });
 </script>
 </body>

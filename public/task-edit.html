@@ -222,7 +222,7 @@
 <div class="create-task">
     <div class="container">
         <header class="header">
-            <h1 class="title">Новая задача</h1>
+            <h1 class="title">Редактирование задачи</h1>
             <div class="close"></div>
         </header>
 
@@ -262,48 +262,48 @@
 </div>
 
 <script>
-    const inputEls = [ ...document.querySelectorAll('.input') ];
-    const btnSaveEl = document.querySelector('.btn-save');
     const btnCancelEl = document.querySelector('.btn-cancel');
-    const startDateEl = document.querySelector('.start-date');
-    const startTimeEl = document.querySelector('.start-time');
+    btnCancelEl.addEventListener('click', () => window.location.href = '/');
 
-    startDateEl.valueAsDate = new Date();
-    const now = new Date();
-    const hours = now.getHours().toString().padStart(2, '0');
-    const minutes = now.getMinutes().toString().padStart(2, '0');
-    startTimeEl.value = `${ hours }:${ minutes }`;
+    const params = new URLSearchParams(window.location.search);
+    const taskId = params.get('id');
 
-    const clickHandlerCreateTask = task => {
-        return fetch('/task-create', {
-            method: 'POST',
-            headers: {
-                'Content-type': 'application/json',
-            },
-            body: JSON.stringify({ task }),
+    const getTask = () => {
+        return fetch(`/tasks/${ taskId }`).then(response => {
+            return response.json();
         });
     };
+    getTask().then(task => {
+        const inputEls = [ ...document.querySelectorAll('.input') ];
 
-    btnSaveEl.addEventListener('click', () => {
-        btnSaveEl.disabled = true;
-
-        const task = {};
+        const {
+            id,
+            creationDatetime,
+            title,
+            description,
+            startDatetime,
+            endDatetime,
+        } = task;
 
         inputEls.forEach(inputEl => {
-            task[inputEl.id] = inputEl.value;
-        });
-
-        clickHandlerCreateTask(task).then(res => {
-            return res.json();
-        }).then(res => {
-            const newTask = {
-                ...res,
-                ...task,
-            };
-            window.location.href = '/';
+            switch (inputEl.id) {
+                case 'startDate':
+                    console.log(startDatetime);
+                    break;
+                case 'startTime':
+                    console.log();
+                    break;
+                case 'endDate':
+                    console.log(endDatetime);
+                    break;
+                case 'endTime':
+                    console.log();
+                    break;
+                default:
+                    inputEl.value = task[inputEl.id];
+            }
         });
     });
-    btnCancelEl.addEventListener('click', () => history.back());
 </script>
 </body>
 </html>
