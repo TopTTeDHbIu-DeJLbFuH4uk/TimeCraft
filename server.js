@@ -36,6 +36,12 @@ app.use(express.json());
 app.get('/', (req, response) => {
     response.sendFile(path.resolve('public/tasks.html'));
 });
+app.get('/task-create', (req, response) => {
+    response.sendFile(path.resolve('public/task-create.html'));
+});
+app.get('/task-edit', (req, response) => {
+    response.sendFile(path.resolve('public/task-edit.html'));
+});
 
 app.get('/tasks', async (req, response) => {
     const getTasks = `
@@ -46,7 +52,7 @@ app.get('/tasks', async (req, response) => {
                start_datetime,
                end_datetime
         FROM tasks
-    ;`;
+        ;`;
 
     const getTasksRes = await pool.query(getTasks);
     const res = getTasksRes.rows;
@@ -58,16 +64,15 @@ app.get('/tasks', async (req, response) => {
 app.get('/tasks/:taskId', async (req, response) => {
     const taskId = req.params.taskId;
     const getTask = `
-        SELECT 
-            id,
-            creation_datetime,
-            title,
-            description,
-            start_datetime,
-            end_datetime
+        SELECT id,
+               creation_datetime,
+               title,
+               description,
+               start_datetime,
+               end_datetime
         FROM tasks
         WHERE id = ($1)
-    ;`;
+        ;`;
 
     const getTaskRes = await pool.query(getTask, [ taskId ]);
     const res = getTaskRes.rows;
@@ -76,23 +81,45 @@ app.get('/tasks/:taskId', async (req, response) => {
     response.status(200).json(task[0]);
 });
 
-app.get('/task-create', (req, response) => {
-    response.sendFile(path.resolve('public/task-create.html'));
+app.put('/tasks/:taskId', async (req, response) => {
+    const taskId = req.params.taskId;
+
+    const {
+        title,
+        description,
+        startDatetime,
+        endDatetime,
+    } = req.body.task;
+
+    const updateTask = `
+        UPDATE tasks
+        SET 
+            title = $1,
+            description = $2,
+            start_datetime = $3,
+            end_datetime = $4
+        WHERE id = $5;
+    ;`;
+
+    await pool.query(updateTask, [
+        title,
+        description,
+        startDatetime,
+        endDatetime,
+        taskId
+    ]);
+    response.sendStatus(200);
 });
 
 app.post('/task-create', async (req, response) => {
     const {
         title,
         description,
-        startDate,
-        startTime,
-        endDate,
-        endTime,
+        startDatetime,
+        endDatetime
     } = req.body.task;
 
     const creationDatetime = new Date().toISOString();
-    const startDatetime = new Date(`${ startDate } ${ startTime }`).toISOString();
-    const endDatetime = new Date(`${ endDate } ${ endTime }`).toISOString();
 
     const createTask = `
         INSERT INTO tasks (creation_datetime,
@@ -121,13 +148,7 @@ app.post('/task-create', async (req, response) => {
         creationDatetime: createTaskRes.rows[0].creation_datetime,
     };
 
-    console.log(res);
-
     response.status(201).json(res);
-});
-
-app.get('/task-edit', (req, response) => {
-    response.sendFile(path.resolve('public/task-edit.html'));
 });
 
 app.delete('/tasks', async (req, response) => {

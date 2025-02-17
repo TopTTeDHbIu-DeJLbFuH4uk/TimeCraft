@@ -286,18 +286,27 @@
 
     btnSaveEl.addEventListener('click', () => {
         btnSaveEl.disabled = true;
-
         const task = {};
 
         inputEls.forEach(inputEl => {
             task[inputEl.id] = inputEl.value;
         });
 
-        clickHandlerCreateTask(task).then(res => {
-            return res.json();
-        }).then(res => {
+        const startDatetime = new Date(`${ task.startDate } ${ task.startTime }`).toISOString();
+        const endDatetime = new Date(`${ task.endDate } ${ task.endTime }`).toISOString();
+
+        const newTask = {
+            title: task.title,
+            description: task.description,
+            startDatetime,
+            endDatetime,
+        };
+
+        clickHandlerCreateTask(newTask).then(response => {
+            return response.json();
+        }).then(response => {
             const newTask = {
-                ...res,
+                ...response,
                 ...task,
             };
             window.location.href = '/';

@@ -265,6 +265,39 @@
     const btnCancelEl = document.querySelector('.btn-cancel');
     btnCancelEl.addEventListener('click', () => window.location.href = '/');
 
+    const btnSaveEl = document.querySelector('.btn-save');
+    btnSaveEl.addEventListener('click', () => {
+        btnSaveEl.disabled = true;
+
+        const inputEls = [ ...document.querySelectorAll('.input') ];
+        const task = {};
+
+        inputEls.forEach(inputEl => {
+            task[inputEl.id] = inputEl.value;
+        });
+
+        const startDatetime = new Date(`${ task.startDate } ${ task.startTime }`).toISOString();
+        const endDatetime = new Date(`${ task.endDate } ${ task.endTime }`).toISOString();
+
+        const newTask = {
+            title: task.title,
+            description: task.description,
+            startDatetime,
+            endDatetime,
+        };
+        updateTask(newTask).then(() => window.location.href = '/');
+    });
+
+    const updateTask = task => {
+        return fetch(`/tasks/${ taskId }`, {
+            method: 'PUT',
+            headers: {
+                'Content-type': 'application/json',
+            },
+            body: JSON.stringify({ task }),
+        });
+    };
+
     const params = new URLSearchParams(window.location.search);
     const taskId = params.get('id');
 
@@ -275,7 +308,6 @@
     };
     getTask().then(task => {
         const inputEls = [ ...document.querySelectorAll('.input') ];
-
         const {
             id,
             creationDatetime,
@@ -288,16 +320,16 @@
         inputEls.forEach(inputEl => {
             switch (inputEl.id) {
                 case 'startDate':
-                    console.log(startDatetime);
+                    inputEl.value = new Date(startDatetime).toISOString().split('T')[0];
                     break;
                 case 'startTime':
-                    console.log();
+                    inputEl.value = new Date(startDatetime).toUTCString().split(' ')[4];
                     break;
                 case 'endDate':
-                    console.log(endDatetime);
+                    inputEl.value = new Date(endDatetime).toISOString().split('T')[0];
                     break;
                 case 'endTime':
-                    console.log();
+                    inputEl.value = new Date(endDatetime).toUTCString().split(' ')[4];
                     break;
                 default:
                     inputEl.value = task[inputEl.id];
