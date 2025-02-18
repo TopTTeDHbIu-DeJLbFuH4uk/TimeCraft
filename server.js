@@ -44,7 +44,27 @@ app.get('/task-edit', (req, response) => {
 });
 
 app.get('/tasks', async (req, response) => {
-    const getTasks = `
+    if (req.query.id) {
+        const taskId = req.query.id;
+
+        const getTask = `
+            SELECT id,
+                   creation_datetime,
+                   title,
+                   description,
+                   start_datetime,
+                   end_datetime
+            FROM tasks
+            WHERE id = ($1)
+        ;`;
+
+        const getTaskRes = await pool.query(getTask, [ taskId ]);
+        const res = getTaskRes.rows;
+
+        const task = res.map(res => convertToCamelCase(res));
+        response.status(200).json(task[0]);
+    } else {
+        const getTasks = `
         SELECT id,
                creation_datetime,
                title,
@@ -54,32 +74,12 @@ app.get('/tasks', async (req, response) => {
         FROM tasks
         ;`;
 
-    const getTasksRes = await pool.query(getTasks);
-    const res = getTasksRes.rows;
+        const getTasksRes = await pool.query(getTasks);
+        const res = getTasksRes.rows;
 
-    const tasks = res.map(res => convertToCamelCase(res))
-    response.status(200).json(tasks);
-});
-
-app.get('/tasks/task-edit', async (req, response) => {
-    const taskId = req.query.id;
-
-    const getTask = `
-        SELECT id,
-               creation_datetime,
-               title,
-               description,
-               start_datetime,
-               end_datetime
-        FROM tasks
-        WHERE id = ($1)
-        ;`;
-
-    const getTaskRes = await pool.query(getTask, [ taskId ]);
-    const res = getTaskRes.rows;
-
-    const task = res.map(res => convertToCamelCase(res));
-    response.status(200).json(task[0]);
+        const tasks = res.map(res => convertToCamelCase(res))
+        response.status(200).json(tasks);
+    }
 });
 
 app.put('/tasks/:taskId', async (req, response) => {

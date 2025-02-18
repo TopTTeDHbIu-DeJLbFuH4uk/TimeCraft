@@ -336,7 +336,7 @@
         titleEl.innerText = 'Редактирование задачи';
 
         const getTask = () => {
-            return fetch(`/tasks/task-edit/?id=${ taskId }`).then(response => {
+            return fetch(`/tasks/?id=${ taskId }`).then(response => {
                 return response.json();
             });
         };
