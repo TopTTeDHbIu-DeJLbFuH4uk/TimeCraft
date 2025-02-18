@@ -278,7 +278,7 @@
     const params = new URLSearchParams(window.location.search);
     const taskId = params.get('id');
 
-    const clickHandlerCreateTask = task => {
+    const createTask = task => {
         return fetch('/tasks', {
             method: 'POST',
             headers: {
@@ -288,9 +288,9 @@
         });
     };
 
-    const clickHandlerUpdateTask = task => {
+    const updateTask = task => {
         return fetch(`/tasks/?id=${ taskId }`, {
-            method: 'PUT',
+            method: 'PATCH',
             headers: {
                 'Content-type': 'application/json',
             },
@@ -317,9 +317,9 @@
         };
 
         if (taskId) {
-            clickHandlerUpdateTask(newTask).then(() => window.location.href = '/');
+            updateTask(newTask).then(() => window.location.href = '/');
         } else {
-            clickHandlerCreateTask(newTask).then(response => {
+            createTask(newTask).then(response => {
                 return response.json();
             }).then(response => {
                 const newTask = {
@@ -330,18 +330,17 @@
             });
         }
     });
+    
     btnCancelEl.addEventListener('click', () => history.back());
 
     if (taskId) {
         titleEl.innerText = 'Редактирование задачи';
-
         const getTask = () => {
             return fetch(`/tasks/?id=${ taskId }`).then(response => {
                 return response.json();
             });
         };
         getTask().then(task => {
-            const inputEls = [ ...document.querySelectorAll('.input') ];
             const {
                 id,
                 creationDatetime,
@@ -357,13 +356,13 @@
                         inputEl.value = new Date(startDatetime).toISOString().split('T')[0];
                         break;
                     case 'startTime':
-                        inputEl.value = new Date(startDatetime).toUTCString().split(' ')[4];
+                        inputEl.value = new Date(startDatetime).toISOString().split('T')[1].slice(0, 8);
                         break;
                     case 'endDate':
                         inputEl.value = new Date(endDatetime).toISOString().split('T')[0];
                         break;
                     case 'endTime':
-                        inputEl.value = new Date(endDatetime).toUTCString().split(' ')[4];
+                        inputEl.value = new Date(endDatetime).toISOString().split('T')[1].slice(0, 8)
                         break;
                     default:
                         inputEl.value = task[inputEl.id];

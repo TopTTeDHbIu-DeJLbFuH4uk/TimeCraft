@@ -67,18 +67,18 @@
             background: linear-gradient(135deg, #ff8c00, #fcbf49);
         }
 
-        .edit-task-btn:disabled,
-        .delete-task-btn:disabled {
-            background-color: #999999;
-            cursor: default;
-        }
-
-        .edit-task-btn.active {
+        .edit-task-btn {
             background: linear-gradient(135deg, #ff8c00, #fcbf49);
         }
 
-        .delete-task-btn.active {
+        .delete-task-btn  {
             background: linear-gradient(135deg, #ff4c4c, #ff0000);
+        }
+
+        .edit-task-btn:disabled,
+        .delete-task-btn:disabled {
+            background: #999999;
+            cursor: default;
         }
 
         .quick-search-container {
@@ -223,10 +223,7 @@
 
     const editTaskBtnEl = document.querySelector('.edit-task-btn');
     editTaskBtnEl.addEventListener('click', () => {
-        const checkboxCheckedEls = [ ...document.querySelectorAll('.checkbox:checked') ];
         const checkboxCheckedEl = document.querySelector('.checkbox:checked');
-
-        if (checkboxCheckedEls.length !== 1) return;
         const taskId = checkboxCheckedEl.taskId;
         window.location.href = `task-edit?id=${ taskId }`;
     });
@@ -262,20 +259,12 @@
         enableDisableButton();
     });
 
-    const getCheckboxes = () => {
-        const checkboxEls = [ ...document.querySelectorAll('.checkbox') ];
-        checkboxEls.forEach(checkboxEl => {
-            checkboxEl.addEventListener('change', enableDisableButton);
-        });
-    };
-
     const enableDisableButton = () => {
         const checkboxCheckedEls = [ ...document.querySelectorAll('.checkbox:checked') ];
         const count = checkboxCheckedEls.length;
 
         const toggleButton = (button, isActive) => {
             button.disabled = !isActive;
-            button.classList.toggle('active', isActive);
         }
         toggleButton(deleteTaskBtnEl, count !== 0);
         toggleButton(editTaskBtnEl, count === 1);
@@ -285,7 +274,7 @@
     const thEls = [ ...document.querySelectorAll('th') ];
     const noTasksMessageEl = document.querySelector('.no-tasks-message');
 
-    const renderTasks = task => {
+    const renderTask = task => {
         const {
             id,
             creationDatetime,
@@ -337,6 +326,7 @@
             trEl.append(tdEl);
         });
         tableBodyEl.append(trEl);
+
     };
     const getTasks = () => {
         return fetch('/tasks').then(response => {
@@ -346,8 +336,12 @@
     getTasks().then(tasks => {
         noTasksMessageEl.classList.toggle('hidden', tasks?.length);
         if (!tasks?.length) return;
-        tasks.forEach(task => renderTasks(task));
-        getCheckboxes();
+        tasks.forEach(task => renderTask(task));
+
+        const checkboxEls = [ ...document.querySelectorAll('.checkbox') ];
+        checkboxEls.forEach(checkboxEl => {
+            checkboxEl.addEventListener('change', enableDisableButton);
+        });
     });
 </script>
 </body>

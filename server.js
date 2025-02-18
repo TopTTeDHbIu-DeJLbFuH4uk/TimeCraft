@@ -1,4 +1,4 @@
-import express, { response } from 'express';
+import express from 'express';
 import path from 'path';
 import pkg from 'pg';
 
@@ -82,7 +82,7 @@ app.get('/tasks', async (req, response) => {
     }
 });
 
-app.put('/tasks', async (req, response) => {
+app.patch('/tasks', async (req, response) => {
     const taskId = req.query.id;
 
     const {
