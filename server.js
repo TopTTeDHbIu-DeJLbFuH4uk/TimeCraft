@@ -82,8 +82,8 @@ app.get('/tasks', async (req, response) => {
     }
 });
 
-app.put('/tasks/:taskId', async (req, response) => {
-    const taskId = req.params.taskId;
+app.put('/tasks', async (req, response) => {
+    const taskId = req.query.id;
 
     const {
         title,
@@ -94,7 +94,7 @@ app.put('/tasks/:taskId', async (req, response) => {
 
     const updateTask = `
         UPDATE tasks
-        SET 
+        SET
             title = $1,
             description = $2,
             start_datetime = $3,
@@ -112,7 +112,7 @@ app.put('/tasks/:taskId', async (req, response) => {
     response.sendStatus(200);
 });
 
-app.post('/task-create', async (req, response) => {
+app.post('/tasks', async (req, response) => {
     const {
         title,
         description,

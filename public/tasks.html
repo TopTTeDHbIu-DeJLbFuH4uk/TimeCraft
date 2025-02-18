@@ -137,8 +137,10 @@
         .table th,
         .table td {
             border: 1px solid #ddd;
-            padding: 10px;
             text-align: left;
+            word-break: break-word;
+
+            padding: 10px;
         }
 
         .table-header th {
@@ -249,6 +251,7 @@
             const rowEls = [ ...document.querySelectorAll('.row') ];
             if (!rowEls.length) noTasksMessageEl.classList.remove('hidden');
             headerCheckboxEl.checked = false;
+            enableDisableButton();
         });
     });
 

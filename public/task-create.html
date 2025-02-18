@@ -279,7 +279,7 @@
     const taskId = params.get('id');
 
     const clickHandlerCreateTask = task => {
-        return fetch('/task-create', {
+        return fetch('/tasks', {
             method: 'POST',
             headers: {
                 'Content-type': 'application/json',
@@ -289,7 +289,7 @@
     };
 
     const clickHandlerUpdateTask = task => {
-        return fetch(`/tasks/${ taskId }`, {
+        return fetch(`/tasks/?id=${ taskId }`, {
             method: 'PUT',
             headers: {
                 'Content-type': 'application/json',
