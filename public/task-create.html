@@ -262,6 +262,7 @@
 </div>
 
 <script>
+    const titleEl = document.querySelector('.title');
     const inputEls = [ ...document.querySelectorAll('.input') ];
     const btnSaveEl = document.querySelector('.btn-save');
     const btnCancelEl = document.querySelector('.btn-cancel');
@@ -274,9 +275,22 @@
     const minutes = now.getMinutes().toString().padStart(2, '0');
     startTimeEl.value = `${ hours }:${ minutes }`;
 
+    const params = new URLSearchParams(window.location.search);
+    const taskId = params.get('id');
+
     const clickHandlerCreateTask = task => {
         return fetch('/task-create', {
             method: 'POST',
+            headers: {
+                'Content-type': 'application/json',
+            },
+            body: JSON.stringify({ task }),
+        });
+    };
+
+    const clickHandlerUpdateTask = task => {
+        return fetch(`/tasks/${ taskId }`, {
+            method: 'PUT',
             headers: {
                 'Content-type': 'application/json',
             },
@@ -302,17 +316,61 @@
             endDatetime,
         };
 
-        clickHandlerCreateTask(newTask).then(response => {
-            return response.json();
-        }).then(response => {
-            const newTask = {
-                ...response,
-                ...task,
-            };
-            window.location.href = '/';
-        });
+        if (taskId) {
+            clickHandlerUpdateTask(newTask).then(() => window.location.href = '/');
+        } else {
+            clickHandlerCreateTask(newTask).then(response => {
+                return response.json();
+            }).then(response => {
+                const newTask = {
+                    ...response,
+                    ...task,
+                };
+                window.location.href = '/';
+            });
+        }
     });
     btnCancelEl.addEventListener('click', () => history.back());
+
+    if (taskId) {
+        titleEl.innerText = 'Редактирование задачи';
+
+        const getTask = () => {
+            return fetch(`/tasks/task-edit/?id=${ taskId }`).then(response => {
+                return response.json();
+            });
+        };
+        getTask().then(task => {
+            const inputEls = [ ...document.querySelectorAll('.input') ];
+            const {
+                id,
+                creationDatetime,
+                title,
+                description,
+                startDatetime,
+                endDatetime,
+            } = task;
+
+            inputEls.forEach(inputEl => {
+                switch (inputEl.id) {
+                    case 'startDate':
+                        inputEl.value = new Date(startDatetime).toISOString().split('T')[0];
+                        break;
+                    case 'startTime':
+                        inputEl.value = new Date(startDatetime).toUTCString().split(' ')[4];
+                        break;
+                    case 'endDate':
+                        inputEl.value = new Date(endDatetime).toISOString().split('T')[0];
+                        break;
+                    case 'endTime':
+                        inputEl.value = new Date(endDatetime).toUTCString().split(' ')[4];
+                        break;
+                    default:
+                        inputEl.value = task[inputEl.id];
+                }
+            });
+        });
+    }
 </script>
 </body>
 </html>

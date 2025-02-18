@@ -40,7 +40,7 @@ app.get('/task-create', (req, response) => {
     response.sendFile(path.resolve('public/task-create.html'));
 });
 app.get('/task-edit', (req, response) => {
-    response.sendFile(path.resolve('public/task-edit.html'));
+    response.sendFile(path.resolve('public/task-create.html'));
 });
 
 app.get('/tasks', async (req, response) => {
@@ -61,8 +61,9 @@ app.get('/tasks', async (req, response) => {
     response.status(200).json(tasks);
 });
 
-app.get('/tasks/:taskId', async (req, response) => {
-    const taskId = req.params.taskId;
+app.get('/tasks/task-edit', async (req, response) => {
+    const taskId = req.query.id;
+
     const getTask = `
         SELECT id,
                creation_datetime,
