@@ -59,10 +59,10 @@ app.get('/tasks', async (req, response) => {
         ;`;
 
         const getTaskRes = await pool.query(getTask, [ taskId ]);
-        const res = getTaskRes.rows;
+        const task = getTaskRes.rows[0];
 
-        const task = res.map(res => convertToCamelCase(res));
-        response.status(200).json(task[0]);
+        const res = convertToCamelCase(task);
+        response.status(200).json(res);
     } else {
         const getTasks = `
         SELECT id,
@@ -75,10 +75,10 @@ app.get('/tasks', async (req, response) => {
         ;`;
 
         const getTasksRes = await pool.query(getTasks);
-        const res = getTasksRes.rows;
+        const tasks = getTasksRes.rows;
 
-        const tasks = res.map(res => convertToCamelCase(res))
-        response.status(200).json(tasks);
+        const res = tasks.map(task => convertToCamelCase(task))
+        response.status(200).json(res);
     }
 });
 
@@ -160,7 +160,7 @@ app.delete('/tasks', async (req, response) => {
         DELETE
         FROM tasks
         WHERE id = ANY ($1)
-        ;`;
+    ;`;
 
     await pool.query(query, [ numericIds ]);
     response.sendStatus(200);

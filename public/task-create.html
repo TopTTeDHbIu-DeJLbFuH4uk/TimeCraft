@@ -330,7 +330,7 @@
             });
         }
     });
-    
+
     btnCancelEl.addEventListener('click', () => history.back());
 
     if (taskId) {
@@ -351,22 +351,20 @@
             } = task;
 
             inputEls.forEach(inputEl => {
-                switch (inputEl.id) {
-                    case 'startDate':
-                        inputEl.value = new Date(startDatetime).toISOString().split('T')[0];
-                        break;
-                    case 'startTime':
-                        inputEl.value = new Date(startDatetime).toISOString().split('T')[1].slice(0, 8);
-                        break;
-                    case 'endDate':
-                        inputEl.value = new Date(endDatetime).toISOString().split('T')[0];
-                        break;
-                    case 'endTime':
-                        inputEl.value = new Date(endDatetime).toISOString().split('T')[1].slice(0, 8)
-                        break;
-                    default:
-                        inputEl.value = task[inputEl.id];
-                }
+                inputEl.value = (() => {
+                    switch (inputEl.id) {
+                        case 'startDate':
+                            return new Date(startDatetime).toISOString().split('T')[0];
+                        case 'startTime':
+                            return new Date(startDatetime).toISOString().split('T')[1].slice(0, 8);
+                        case 'endDate':
+                            return new Date(endDatetime).toISOString().split('T')[0];
+                        case 'endTime':
+                            return new Date(endDatetime).toISOString().split('T')[1].slice(0, 8)
+                        default:
+                            return task[inputEl.id];
+                    }
+                })();
             });
         });
     }

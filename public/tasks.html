@@ -71,7 +71,7 @@
             background: linear-gradient(135deg, #ff8c00, #fcbf49);
         }
 
-        .delete-task-btn  {
+        .delete-task-btn {
             background: linear-gradient(135deg, #ff4c4c, #ff0000);
         }
 
@@ -115,16 +115,17 @@
 
         /*------------------------------TABLE------------------------------*/
 
-        /*.table-container {*/
-        /*    display: block;*/
-        /*    width: 100%;*/
-        /*    max-width: 100%;*/
-        /*    max-height: 800px;*/
+        .table-container {
+            display: block;
+            width: 100%;
+            max-width: 100%;
+            max-height: 800px;
 
-        /*    overflow: auto;*/
-        /*}*/
+            overflow: auto;
+        }
 
         .table {
+            display: table;
             border-collapse: collapse;
             table-layout: fixed;
 
@@ -134,31 +135,39 @@
             overflow: auto;
         }
 
-        .table th,
-        .table td {
+        .table-header-cell,
+        .table-cell {
             border: 1px solid #ddd;
-            text-align: left;
-            word-break: break-word;
-
             padding: 10px;
         }
-
-        .table-header th {
+        .table-header-cell {
             background-color: #f4f4f4;
             font-weight: bold;
         }
 
-        table th:nth-child(1) {
+        .table-cell:nth-child(1),
+        .table-header-cell:nth-child(1) {
+            text-align: center;
             width: 40px;
         }
 
         .header-checkbox,
         .checkbox {
+            margin: 0;
             cursor: pointer;
         }
 
-        .table-body td {
+        .table-row {
+            max-height: 80px;
+        }
+        .table-cell {
+            max-height: 80px;
+            /*height: 80px;*/
+            overflow: hidden;
+
+            text-overflow: ellipsis;
             color: #f2f2f2;
+            word-break: break-word;
         }
 
         .no-tasks-message {
@@ -200,17 +209,16 @@
     <div class="table-container">
         <table class="table">
             <thead>
-            <tr class="table-header">
-                <th>
-                    <input type="checkbox" class="header-checkbox">
+            <tr>
+                <th class="table-header-cell">
+                    <input class="header-checkbox" type="checkbox">
                 </th>
-                <th data-id="title">Название</th>
-                <th data-id="description">Описание</th>
-                <th data-id="startDatetime">Дата начала</th>
-                <th data-id="endDatetime">Дата окончания</th>
+                <th class="table-header-cell" data-id="title">Название</th>
+                <th class="table-header-cell" data-id="description">Описание</th>
+                <th class="table-header-cell" data-id="startDatetime">Дата начала</th>
+                <th class="table-header-cell" data-id="endDatetime">Дата окончания</th>
             </tr>
             </thead>
-
             <tbody class="table-body"></tbody>
         </table>
     </div>
@@ -242,13 +250,13 @@
 
         }).then(() => {
             checkboxCheckedEls.forEach(checkboxEl => {
-                checkboxEl.closest('.row').remove();
+                checkboxEl.closest('.table-row').remove();
             });
 
-            const rowEls = [ ...document.querySelectorAll('.row') ];
-            if (!rowEls.length) noTasksMessageEl.classList.remove('hidden');
+            const tableRowEls = [ ...document.querySelectorAll('.table-row') ];
+            if (!tableRowEls.length) noTasksMessageEl.classList.remove('hidden');
             headerCheckboxEl.checked = false;
-            enableDisableButton();
+            toggleButtons();
         });
     });
 
@@ -256,22 +264,17 @@
     headerCheckboxEl.addEventListener('change', () => {
         const checkboxEls = [ ...document.querySelectorAll('.checkbox') ];
         checkboxEls.forEach(checkboxEl => checkboxEl.checked = headerCheckboxEl.checked);
-        enableDisableButton();
+        toggleButtons();
     });
 
-    const enableDisableButton = () => {
-        const checkboxCheckedEls = [ ...document.querySelectorAll('.checkbox:checked') ];
-        const count = checkboxCheckedEls.length;
-
-        const toggleButton = (button, isActive) => {
-            button.disabled = !isActive;
-        }
-        toggleButton(deleteTaskBtnEl, count !== 0);
-        toggleButton(editTaskBtnEl, count === 1);
-    };
+    const toggleButtons = () => {
+        const selectedItemsCount = [ ...document.querySelectorAll('.checkbox:checked') ].length;
+        deleteTaskBtnEl.disabled = !selectedItemsCount;
+        editTaskBtnEl.disabled = selectedItemsCount !== 1;
+    }
 
     const tableBodyEl = document.querySelector('.table-body');
-    const thEls = [ ...document.querySelectorAll('th') ];
+    const tableHeaderCellEls = [ ...document.querySelectorAll('.table-header-cell') ];
     const noTasksMessageEl = document.querySelector('.no-tasks-message');
 
     const renderTask = task => {
@@ -285,10 +288,11 @@
         } = task;
 
         const trEl = document.createElement('tr');
-        trEl.classList.add('row');
+        trEl.classList.add('table-row');
 
-        thEls.forEach((thEl, index) => {
+        tableHeaderCellEls.forEach((thEl, index) => {
             const tdEl = document.createElement('td');
+            tdEl.classList.add('table-cell');
 
             if (index === 0) {
                 const inputEl = document.createElement('input');
@@ -340,7 +344,7 @@
 
         const checkboxEls = [ ...document.querySelectorAll('.checkbox') ];
         checkboxEls.forEach(checkboxEl => {
-            checkboxEl.addEventListener('change', enableDisableButton);
+            checkboxEl.addEventListener('change', toggleButtons);
         });
     });
 </script>
