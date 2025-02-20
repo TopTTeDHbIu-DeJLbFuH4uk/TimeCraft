@@ -42,6 +42,9 @@ app.get('/task-create', (req, response) => {
 app.get('/task-edit', (req, response) => {
     response.sendFile(path.resolve('public/task-create.html'));
 });
+app.get('/task-details', (req, response) => {
+   response.sendFile(path.resolve('public/task-details.html'));
+});
 
 app.get('/tasks', async (req, response) => {
     if (req.query.id) {
@@ -78,6 +81,7 @@ app.get('/tasks', async (req, response) => {
         const tasks = getTasksRes.rows;
 
         const res = tasks.map(task => convertToCamelCase(task))
+
         response.status(200).json(res);
     }
 });

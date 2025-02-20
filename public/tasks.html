@@ -120,7 +120,6 @@
             width: 100%;
             max-width: 100%;
             max-height: 800px;
-
             overflow: auto;
         }
 
@@ -131,14 +130,12 @@
 
             min-width: 800px;
             width: 100%;
-
-            overflow: auto;
         }
 
         .table-header-cell,
         .table-cell {
             border: 1px solid #ddd;
-            padding: 10px;
+            padding: 8px;
         }
 
         .table-header-cell {
@@ -152,31 +149,39 @@
             width: 40px;
         }
 
-        .table-body {
-            width: 100%;
-        }
-
         .header-checkbox,
         .checkbox {
             margin: 0;
             cursor: pointer;
         }
 
-        .table-row {
-            /*max-height: 80px;*/
+        .table-cell {
+            overflow: hidden;
+
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            color: #f2f2f2;
         }
 
-        .table-cell {
-            display: -webkit-box;
-            -webkit-box-orient: vertical;
-            -moz-box-orient: vertical;
-            text-overflow: ellipsis;
-            overflow: hidden;
-            -webkit-line-clamp: 3;
-            line-clamp: 3;
-
+        .table-content {
+            position: relative;
             color: #f2f2f2;
-            word-break: break-word;
+            cursor: pointer;
+        }
+
+        .table-content::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            height: 1px;
+            width: 0;
+            background-color: #f2f2f2;
+            transition: width .5s ease;
+        }
+
+        .table-content:hover::after {
+            width: 100%;
         }
 
         .no-tasks-message {
@@ -303,6 +308,9 @@
             const tdEl = document.createElement('td');
             tdEl.classList.add('table-cell');
 
+            const spanEl = document.createElement('span');
+            spanEl.classList.add('table-content');
+
             if (index === 0) {
                 const inputEl = document.createElement('input');
                 inputEl.classList.add('checkbox');
@@ -311,7 +319,8 @@
 
                 tdEl.append(inputEl);
             } else {
-                tdEl.innerText = (() => {
+                spanEl.taskId = id;
+                spanEl.innerText = (() => {
                     switch (thEl.dataset.id) {
                         case 'startDatetime':
                             return new Intl.DateTimeFormat(navigator.language, {
@@ -337,9 +346,10 @@
                 })();
             }
             trEl.append(tdEl);
+            if (index === 0) return;
+            tdEl.append(spanEl);
         });
         tableBodyEl.append(trEl);
-
     };
     const getTasks = () => {
         return fetch('/tasks').then(response => {
@@ -354,6 +364,14 @@
         const checkboxEls = [ ...document.querySelectorAll('.checkbox') ];
         checkboxEls.forEach(checkboxEl => {
             checkboxEl.addEventListener('change', toggleButtons);
+        });
+
+        const tableContentEls = [ ...document.querySelectorAll('.table-content') ];
+        tableContentEls.forEach(tableContentEl => {
+            tableContentEl.addEventListener('click', () => {
+                const taskId = tableContentEl.taskId;
+                window.location.href = `/task-details?id=${ taskId }`;
+            });
         });
     });
 </script>
