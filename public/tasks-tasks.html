@@ -212,9 +212,10 @@
                 <label for="select-by">Сортировать по:</label>
                 <select class="select-by" id="select-by">
                     <option value="" disabled selected>Выбрать</option>
-                    <option value="name">Названию</option>
-                    <option value="date">Дате</option>
-                    <option value="time">Времени</option>
+                    <option value="title">Названию</option>
+                    <option value="description">Описанию</option>
+                    <option value="start_datetime">Дате начала</option>
+                    <option value="end_datetime">Дате окончания</option>
                 </select>
             </div>
         </nav>
@@ -291,6 +292,40 @@
     const tableHeaderCellEls = [ ...document.querySelectorAll('.table-header-cell') ];
     const noTasksMessageEl = document.querySelector('.no-tasks-message');
 
+    const selectByEl = document.querySelector('.select-by');
+    selectByEl.addEventListener('change', () => {
+        params.sortBy = selectByEl.value;
+        createQueryString(params);
+    });
+
+    const quickSearchEl = document.querySelector('.quick-search');
+    let timeoutId;
+    let stopSearch = false;
+    quickSearchEl.addEventListener('input', () => {
+        if (stopSearch) clearTimeout(timeoutId);
+        stopSearch = true;
+
+        timeoutId = setTimeout(() => {
+            params.searchTerm = quickSearchEl.value;
+            createQueryString(params);
+            stopSearch = false;
+        }, 500);
+    });
+
+    const createQueryString = params => {
+        const searchParams = new URLSearchParams;
+
+        Object.entries(params).forEach(([ key, value ]) => {
+            if (value !== undefined && value !== null) searchParams.append(key, value);
+        });
+
+        requestTasks(searchParams.toString());
+    };
+    const params = {
+        sortBy: null,
+        searchTerm: null,
+    };
+
     const renderTask = task => {
         const {
             id,
@@ -351,13 +386,17 @@
         });
         tableBodyEl.append(trEl);
     };
-    const getTasks = () => {
-        return fetch('/tasks').then(response => {
+    const requestTasks = queryString => {
+        fetch(`/tasks?${ queryString }`).then(response => {
             return response.json();
-        });
+        }).then(tasks => getTasks(tasks));
     };
-    getTasks().then(tasks => {
+    requestTasks();
+
+    const getTasks = tasks => {
         noTasksMessageEl.classList.toggle('hidden', tasks?.length);
+        tableBodyEl.innerText = '';
+
         if (!tasks?.length) return;
         tasks.forEach(task => renderTask(task));
 
@@ -373,7 +412,7 @@
                 window.location.href = `/task-details?id=${ taskId }`;
             });
         });
-    });
+    };
 </script>
 </body>
 </html>

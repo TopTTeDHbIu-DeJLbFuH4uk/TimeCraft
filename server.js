@@ -11,21 +11,9 @@ const pool = new Pool({
     password: 'qwerty321',
     port: 5432,
 });
-pool.connect()
-    .then(client => {
-        return client.query('SELECT 1 FROM tasks LIMIT 1')
-            .then(() => {
-                console.log('Connected to PostgreSQL and table "tasks" is accessible');
-                client.release();
-            })
-            .catch(err => {
-                console.error('Error accessing "tasks" table:', err.stack);
-                client.release();
-            });
-    })
-    .catch(err => {
-        console.error('Connection error', err.stack);
-    });
+pool.connect().then(() => {
+    console.log('Connected to PostgreSQL and table "tasks" is accessible');
+});
 
 const PORT = 3000;
 const app = express();
@@ -34,22 +22,57 @@ app.use(express.static('public'));
 app.use(express.json());
 
 app.get('/', (req, response) => {
-    response.sendFile(path.resolve('public/tasks.html'));
+    response.sendFile(path.resolve('public/tasks-tasks.html'));
 });
 app.get('/task-create', (req, response) => {
-    response.sendFile(path.resolve('public/task-create.html'));
+    response.sendFile(path.resolve('public/tasks-task-create.html'));
 });
 app.get('/task-edit', (req, response) => {
-    response.sendFile(path.resolve('public/task-create.html'));
+    response.sendFile(path.resolve('public/tasks-task-create.html'));
 });
 app.get('/task-details', (req, response) => {
-   response.sendFile(path.resolve('public/task-details.html'));
+    response.sendFile(path.resolve('public/tasks-task.html'));
 });
 
 app.get('/tasks', async (req, response) => {
+    const { searchTerm: searchString } = req.query;
+    if (searchString) {
+        const searchTerm = `
+            SELECT title,
+                   description,
+                   start_datetime,
+                   end_datetime
+            FROM tasks
+            WHERE title ILIKE $1 OR description ILIKE $1
+        ;`;
+
+        const sortedResults = await pool.query(searchTerm, [`%${searchString}%`]);
+        const tasks = sortedResults.rows;
+
+        const res = tasks.map(task => convertToCamelCase(task));
+        return response.status(200).json(res);
+    }
+
+    const { sortBy: value } = req.query;
+    if (value) {
+        const sortBy = `
+            SELECT title,
+                   description,
+                   start_datetime,
+                   end_datetime
+            FROM tasks
+            ORDER BY ${ value };
+            ;`;
+
+        const sortedValues = await pool.query(sortBy);
+        const tasks = sortedValues.rows;
+
+        const res = tasks.map(task => convertToCamelCase(task));
+        return response.status(200).json(res);
+    }
+
     if (req.query.id) {
         const taskId = req.query.id;
-
         const getTask = `
             SELECT id,
                    creation_datetime,
@@ -65,9 +88,10 @@ app.get('/tasks', async (req, response) => {
         const task = getTaskRes.rows[0];
 
         const res = convertToCamelCase(task);
-        response.status(200).json(res);
-    } else {
-        const getTasks = `
+        return response.status(200).json(res);
+    }
+
+    const getTasks = `
         SELECT id,
                creation_datetime,
                title,
@@ -75,15 +99,13 @@ app.get('/tasks', async (req, response) => {
                start_datetime,
                end_datetime
         FROM tasks
-        ;`;
+    ;`;
 
-        const getTasksRes = await pool.query(getTasks);
-        const tasks = getTasksRes.rows;
+    const getTasksRes = await pool.query(getTasks);
+    const tasks = getTasksRes.rows;
 
-        const res = tasks.map(task => convertToCamelCase(task))
-
-        response.status(200).json(res);
-    }
+    const res = tasks.map(task => convertToCamelCase(task))
+    return response.status(200).json(res);
 });
 
 app.patch('/tasks', async (req, response) => {
@@ -98,13 +120,12 @@ app.patch('/tasks', async (req, response) => {
 
     const updateTask = `
         UPDATE tasks
-        SET
-            title = $1,
-            description = $2,
+        SET title          = $1,
+            description    = $2,
             start_datetime = $3,
-            end_datetime = $4
+            end_datetime   = $4
         WHERE id = $5;
-    ;`;
+        ;`;
 
     await pool.query(updateTask, [
         title,
@@ -164,7 +185,7 @@ app.delete('/tasks', async (req, response) => {
         DELETE
         FROM tasks
         WHERE id = ANY ($1)
-    ;`;
+        ;`;
 
     await pool.query(query, [ numericIds ]);
     response.sendStatus(200);
