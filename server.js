@@ -25,44 +25,55 @@ app.get('/', (req, response) => {
     response.sendFile(path.resolve('public/tasks-tasks.html'));
 });
 app.get('/task-create', (req, response) => {
-    response.sendFile(path.resolve('public/tasks-task-create.html'));
+    response.sendFile(path.resolve('public/tasks-create.html'));
 });
 app.get('/task-edit', (req, response) => {
-    response.sendFile(path.resolve('public/tasks-task-create.html'));
+    response.sendFile(path.resolve('public/tasks-create.html'));
 });
 app.get('/task-details', (req, response) => {
     response.sendFile(path.resolve('public/tasks-task.html'));
 });
 
 app.get('/tasks', async (req, response) => {
-    const { searchTerm: searchString } = req.query;
+    const { string: searchString } = req.query;
+
     if (searchString) {
         const searchTerm = `
-            SELECT title,
-                   description,
-                   start_datetime,
-                   end_datetime
+            SELECT 
+                title,
+                description,
+                start_datetime,
+                end_datetime
             FROM tasks
-            WHERE title ILIKE $1 OR description ILIKE $1
+            WHERE title ILIKE $1
+               OR description ILIKE $1
         ;`;
 
-        const sortedResults = await pool.query(searchTerm, [`%${searchString}%`]);
+        const sortedResults = await pool.query(searchTerm, [ `%${ searchString }%` ]);
         const tasks = sortedResults.rows;
 
         const res = tasks.map(task => convertToCamelCase(task));
         return response.status(200).json(res);
     }
 
-    const { sortBy: value } = req.query;
-    if (value) {
+    const { field: field, order: order } = req.query;
+    if (field || order) {
+        const allowedFields = ['creation_datetime', 'title', 'description', 'start_datetime', 'end_datetime'];
+        const allowedOrders = ['ASC', 'DESC'];
+
+        if (!allowedFields.includes(field)) throw new Error('Invalid sort field');
+        const sortOrder = allowedOrders.includes(order?.toUpperCase()) ? order.toUpperCase() : 'ASC';
+
         const sortBy = `
-            SELECT title,
-                   description,
-                   start_datetime,
-                   end_datetime
+            SELECT 
+                creation_datetime,
+                title,
+                description,
+                start_datetime,
+                end_datetime
             FROM tasks
-            ORDER BY ${ value };
-            ;`;
+            ORDER BY ${ field } ${ sortOrder };
+        ;`;
 
         const sortedValues = await pool.query(sortBy);
         const tasks = sortedValues.rows;
@@ -82,7 +93,7 @@ app.get('/tasks', async (req, response) => {
                    end_datetime
             FROM tasks
             WHERE id = ($1)
-        ;`;
+            ;`;
 
         const getTaskRes = await pool.query(getTask, [ taskId ]);
         const task = getTaskRes.rows[0];
@@ -92,12 +103,13 @@ app.get('/tasks', async (req, response) => {
     }
 
     const getTasks = `
-        SELECT id,
-               creation_datetime,
-               title,
-               description,
-               start_datetime,
-               end_datetime
+        SELECT 
+            id,
+            creation_datetime,
+            title,
+            description,
+            start_datetime,
+            end_datetime
         FROM tasks
     ;`;
 
@@ -125,7 +137,7 @@ app.patch('/tasks', async (req, response) => {
             start_datetime = $3,
             end_datetime   = $4
         WHERE id = $5;
-        ;`;
+    ;`;
 
     await pool.query(updateTask, [
         title,
@@ -148,18 +160,22 @@ app.post('/tasks', async (req, response) => {
     const creationDatetime = new Date().toISOString();
 
     const createTask = `
-        INSERT INTO tasks (creation_datetime,
-                           title,
-                           description,
-                           start_datetime,
-                           end_datetime)
-        VALUES ($1,
-                $2,
-                $3,
-                $4,
-                $5) RETURNING id, 
+        INSERT INTO tasks (
+            creation_datetime,
+            title,
+            description,
+            start_datetime,
+            end_datetime
+        )
+        VALUES (
+            $1,
+            $2,
+            $3,
+            $4,
+            $5
+        ) RETURNING id, 
         creation_datetime
-        ;`;
+    ;`;
 
     const createTaskRes = await pool.query(createTask, [
         creationDatetime,
@@ -185,7 +201,7 @@ app.delete('/tasks', async (req, response) => {
         DELETE
         FROM tasks
         WHERE id = ANY ($1)
-        ;`;
+    ;`;
 
     await pool.query(query, [ numericIds ]);
     response.sendStatus(200);

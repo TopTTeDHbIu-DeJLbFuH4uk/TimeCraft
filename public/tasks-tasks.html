@@ -211,11 +211,11 @@
             <div class="sorting-container">
                 <label for="select-by">Сортировать по:</label>
                 <select class="select-by" id="select-by">
-                    <option value="" disabled selected>Выбрать</option>
-                    <option value="title">Названию</option>
-                    <option value="description">Описанию</option>
-                    <option value="start_datetime">Дате начала</option>
-                    <option value="end_datetime">Дате окончания</option>
+                    <option value="creation_datetime|asc">Дате создания</option>
+                    <option value="title|asc">Названию [А-я]</option>
+                    <option value="title|desc">Названию [Я-а]</option>
+                    <option value="start_datetime|asc">Дате начала</option>
+                    <option value="end_datetime|asc">Дате окончания</option>
                 </select>
             </div>
         </nav>
@@ -294,8 +294,10 @@
 
     const selectByEl = document.querySelector('.select-by');
     selectByEl.addEventListener('change', () => {
-        params.sortBy = selectByEl.value;
-        createQueryString(params);
+        const [ field, order ] = selectByEl.value.split('|');
+        const sort = { field, order };
+
+        createQueryString(sort);
     });
 
     const quickSearchEl = document.querySelector('.quick-search');
@@ -306,11 +308,25 @@
         stopSearch = true;
 
         timeoutId = setTimeout(() => {
-            params.searchTerm = quickSearchEl.value;
-            createQueryString(params);
+            quickSearch();
             stopSearch = false;
         }, 500);
     });
+    quickSearchEl.addEventListener('keydown', e => {
+        if (e.key === 'Enter') {
+            clearTimeout(timeoutId);
+            quickSearch();
+        }
+    });
+    quickSearchEl.addEventListener('blur', () => {
+        clearTimeout(timeoutId);
+        quickSearch();
+    });
+
+    const quickSearch = () => {
+        const searchString = { string: quickSearchEl.value };
+        createQueryString(searchString);
+    };
 
     const createQueryString = params => {
         const searchParams = new URLSearchParams;
@@ -318,12 +334,7 @@
         Object.entries(params).forEach(([ key, value ]) => {
             if (value !== undefined && value !== null) searchParams.append(key, value);
         });
-
-        requestTasks(searchParams.toString());
-    };
-    const params = {
-        sortBy: null,
-        searchTerm: null,
+        getTasks(searchParams.toString());
     };
 
     const renderTask = task => {
@@ -386,33 +397,32 @@
         });
         tableBodyEl.append(trEl);
     };
-    const requestTasks = queryString => {
-        fetch(`/tasks?${ queryString }`).then(response => {
+    const getTasks = queryString => {
+        return fetch(`/tasks?${ queryString }`).then(response => {
             return response.json();
-        }).then(tasks => getTasks(tasks));
-    };
-    requestTasks();
 
-    const getTasks = tasks => {
-        noTasksMessageEl.classList.toggle('hidden', tasks?.length);
-        tableBodyEl.innerText = '';
+        }).then(tasks => {
+            noTasksMessageEl.classList.toggle('hidden', tasks?.length);
+            tableBodyEl.innerText = '';
 
-        if (!tasks?.length) return;
-        tasks.forEach(task => renderTask(task));
+            if (!tasks?.length) return;
+            tasks.forEach(task => renderTask(task));
 
-        const checkboxEls = [ ...document.querySelectorAll('.checkbox') ];
-        checkboxEls.forEach(checkboxEl => {
-            checkboxEl.addEventListener('change', toggleButtons);
-        });
+            const checkboxEls = [ ...document.querySelectorAll('.checkbox') ];
+            checkboxEls.forEach(checkboxEl => {
+                checkboxEl.addEventListener('change', toggleButtons);
+            });
 
-        const tableContentEls = [ ...document.querySelectorAll('.table-content') ];
-        tableContentEls.forEach(tableContentEl => {
-            tableContentEl.addEventListener('click', () => {
-                const taskId = tableContentEl.taskId;
-                window.location.href = `/task-details?id=${ taskId }`;
+            const tableContentEls = [ ...document.querySelectorAll('.table-content') ];
+            tableContentEls.forEach(tableContentEl => {
+                tableContentEl.addEventListener('click', () => {
+                    const taskId = tableContentEl.taskId;
+                    window.location.href = `/task-details?id=${ taskId }`;
+                });
             });
         });
-    };
+    }
+    getTasks();
 </script>
 </body>
 </html>
