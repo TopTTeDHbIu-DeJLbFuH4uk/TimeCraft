@@ -35,9 +35,9 @@ app.get('/task-details', (req, response) => {
 });
 
 app.get('/tasks', async (req, response) => {
-    const { string: searchString } = req.query;
+    const { search: searchValue } = req.query;
 
-    if (searchString) {
+    if (searchValue) {
         const searchTerm = `
             SELECT 
                 title,
@@ -49,7 +49,7 @@ app.get('/tasks', async (req, response) => {
                OR description ILIKE $1
         ;`;
 
-        const sortedResults = await pool.query(searchTerm, [ `%${ searchString }%` ]);
+        const sortedResults = await pool.query(searchTerm, [ `%${ searchValue }%` ]);
         const tasks = sortedResults.rows;
 
         const res = tasks.map(task => convertToCamelCase(task));

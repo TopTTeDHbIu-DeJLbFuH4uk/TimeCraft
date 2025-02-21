@@ -197,7 +197,7 @@
 <main class="container">
     <header>
         <h1 class="logo">TimeCraft</h1>
-        <h2 class="title">Задачи N</h2>
+        <h2 class="title">Задачи</h2>
 
         <nav class="nav-container">
             <button class="btn create-task-btn">Создать задачу</button>
@@ -271,7 +271,7 @@
             const tableRowEls = [ ...document.querySelectorAll('.table-row') ];
             if (!tableRowEls.length) noTasksMessageEl.classList.remove('hidden');
             headerCheckboxEl.checked = false;
-            toggleButtons();
+            updateActionButtons();
         });
     });
 
@@ -279,10 +279,10 @@
     headerCheckboxEl.addEventListener('change', () => {
         const checkboxEls = [ ...document.querySelectorAll('.checkbox') ];
         checkboxEls.forEach(checkboxEl => checkboxEl.checked = headerCheckboxEl.checked);
-        toggleButtons();
+        updateActionButtons();
     });
 
-    const toggleButtons = () => {
+    const updateActionButtons = () => {
         const selectedItemsCount = [ ...document.querySelectorAll('.checkbox:checked') ].length;
         deleteTaskBtnEl.disabled = !selectedItemsCount;
         editTaskBtnEl.disabled = selectedItemsCount !== 1;
@@ -291,50 +291,54 @@
     const tableBodyEl = document.querySelector('.table-body');
     const tableHeaderCellEls = [ ...document.querySelectorAll('.table-header-cell') ];
     const noTasksMessageEl = document.querySelector('.no-tasks-message');
+    const titleEl = document.querySelector('.title');
 
     const selectByEl = document.querySelector('.select-by');
     selectByEl.addEventListener('change', () => {
         const [ field, order ] = selectByEl.value.split('|');
         const sort = { field, order };
 
-        createQueryString(sort);
+        const searchParams = createQueryString(sort);
+        getTasks(searchParams);
     });
 
     const quickSearchEl = document.querySelector('.quick-search');
-    let timeoutId;
-    let stopSearch = false;
+    let searchTimeoutId;
+    let isSearchPending = false;
     quickSearchEl.addEventListener('input', () => {
-        if (stopSearch) clearTimeout(timeoutId);
-        stopSearch = true;
+        if (isSearchPending) clearTimeout(searchTimeoutId);
+        isSearchPending = true;
 
-        timeoutId = setTimeout(() => {
-            quickSearch();
-            stopSearch = false;
+        searchTimeoutId = setTimeout(() => {
+            executeQuickSearch();
+            isSearchPending = false;
         }, 500);
     });
     quickSearchEl.addEventListener('keydown', e => {
         if (e.key === 'Enter') {
-            clearTimeout(timeoutId);
-            quickSearch();
+            clearTimeout(searchTimeoutId);
+            executeQuickSearch();
         }
     });
     quickSearchEl.addEventListener('blur', () => {
-        clearTimeout(timeoutId);
-        quickSearch();
+        clearTimeout(searchTimeoutId);
+        executeQuickSearch();
     });
 
-    const quickSearch = () => {
-        const searchString = { string: quickSearchEl.value };
-        createQueryString(searchString);
+    const executeQuickSearch = () => {
+        const searchValue = { search: quickSearchEl.value };
+        const searchParams = createQueryString(searchValue);
+        getTasks(searchParams);
     };
 
     const createQueryString = params => {
         const searchParams = new URLSearchParams;
 
         Object.entries(params).forEach(([ key, value ]) => {
-            if (value !== undefined && value !== null) searchParams.append(key, value);
+            if (value != null) searchParams.append(key, value);
         });
-        getTasks(searchParams.toString());
+
+        return searchParams.toString();
     };
 
     const renderTask = task => {
@@ -397,20 +401,27 @@
         });
         tableBodyEl.append(trEl);
     };
-    const getTasks = queryString => {
-        return fetch(`/tasks?${ queryString }`).then(response => {
+    const getTasks = searchParams => {
+        return fetch(`/tasks?${ searchParams }`).then(response => {
             return response.json();
 
         }).then(tasks => {
             noTasksMessageEl.classList.toggle('hidden', tasks?.length);
             tableBodyEl.innerText = '';
+            titleEl.innerText = 'Задачи';
 
             if (!tasks?.length) return;
-            tasks.forEach(task => renderTask(task));
+
+            let taskCount = 0;
+            tasks.forEach(task => {
+                taskCount++;
+                renderTask(task);
+            });
+            titleEl.innerText = `Задачи ${taskCount}`;
 
             const checkboxEls = [ ...document.querySelectorAll('.checkbox') ];
             checkboxEls.forEach(checkboxEl => {
-                checkboxEl.addEventListener('change', toggleButtons);
+                checkboxEl.addEventListener('change', updateActionButtons);
             });
 
             const tableContentEls = [ ...document.querySelectorAll('.table-content') ];
