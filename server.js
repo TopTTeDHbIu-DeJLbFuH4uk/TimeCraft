@@ -35,9 +35,8 @@ app.get('/task-details', (req, response) => {
 });
 
 app.get('/tasks', async (req, response) => {
-    const { search: searchValue } = req.query;
-
-    if (searchValue) {
+    const { query: queryString } = req.query;
+    if (queryString) {
         const searchTerm = `
             SELECT 
                 title,
@@ -46,11 +45,11 @@ app.get('/tasks', async (req, response) => {
                 end_datetime
             FROM tasks
             WHERE title ILIKE $1
-               OR description ILIKE $1
+            OR description ILIKE $1
         ;`;
 
-        const sortedResults = await pool.query(searchTerm, [ `%${ searchValue }%` ]);
-        const tasks = sortedResults.rows;
+        const searchResults = await pool.query(searchTerm, [ `%${ queryString }%` ]);
+        const tasks = searchResults.rows;
 
         const res = tasks.map(task => convertToCamelCase(task));
         return response.status(200).json(res);
@@ -82,8 +81,8 @@ app.get('/tasks', async (req, response) => {
         return response.status(200).json(res);
     }
 
-    if (req.query.id) {
-        const taskId = req.query.id;
+    const taskId = req.query.id;
+    if (taskId) {
         const getTask = `
             SELECT id,
                    creation_datetime,

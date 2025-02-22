@@ -298,7 +298,7 @@
         const [ field, order ] = selectByEl.value.split('|');
         const sort = { field, order };
 
-        const searchParams = createQueryString(sort);
+        const searchParams = generateQueryString(sort);
         getTasks(searchParams);
     });
 
@@ -326,19 +326,18 @@
     });
 
     const executeQuickSearch = () => {
-        const searchValue = { search: quickSearchEl.value };
-        const searchParams = createQueryString(searchValue);
-        getTasks(searchParams);
+        const queryObject = { query: quickSearchEl.value };
+        const queryString = generateQueryString(queryObject);
+        getTasks(queryString);
     };
 
-    const createQueryString = params => {
-        const searchParams = new URLSearchParams;
+    const generateQueryString = params => {
+        const urlParams = new URLSearchParams;
 
         Object.entries(params).forEach(([ key, value ]) => {
-            if (value != null) searchParams.append(key, value);
+            if (value != null) urlParams.append(key, value);
         });
-
-        return searchParams.toString();
+        return urlParams.toString();
     };
 
     const renderTask = task => {
@@ -401,8 +400,8 @@
         });
         tableBodyEl.append(trEl);
     };
-    const getTasks = searchParams => {
-        return fetch(`/tasks?${ searchParams }`).then(response => {
+    const getTasks = queryString => {
+        return fetch(`/tasks?${ queryString }`).then(response => {
             return response.json();
 
         }).then(tasks => {
@@ -417,7 +416,7 @@
                 taskCount++;
                 renderTask(task);
             });
-            titleEl.innerText = `Задачи ${taskCount}`;
+            titleEl.innerText = `Задачи ${ taskCount }`;
 
             const checkboxEls = [ ...document.querySelectorAll('.checkbox') ];
             checkboxEls.forEach(checkboxEl => {
