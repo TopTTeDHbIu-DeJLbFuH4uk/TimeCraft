@@ -1,18 +1,18 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <style>
+	<meta charset="UTF-8">
+	<meta name="viewport"
+		  content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<style>
         @import url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap');
-    </style>
-    <title>TimeCraft</title>
-    <link rel="icon" href="images/logo.svg">
-    <!-- STYLES -->
-    <link rel="stylesheet" href="./styles/main.css">
-    <style>
+	</style>
+	<title>TimeCraft</title>
+	<link rel="icon" href="images/logo.svg">
+	<!-- STYLES -->
+	<link rel="stylesheet" href="./styles/main.css">
+	<style>
         * {
             color: #000000;
         }
@@ -190,249 +190,249 @@
             font-size: 28px;
             padding-top: 30px;
         }
-    </style>
+	</style>
 </head>
 <body>
 
 <main class="container">
-    <header>
-        <h1 class="logo">TimeCraft</h1>
-        <h2 class="title">Задачи</h2>
+	<header>
+		<h1 class="logo">TimeCraft</h1>
+		<h2 class="title">Задачи</h2>
 
-        <nav class="nav-container">
-            <button class="btn create-task-btn">Создать задачу</button>
-            <button class="btn edit-task-btn" disabled>Редактировать</button>
-            <button class="btn delete-task-btn" disabled>Удалить выбранные</button>
+		<nav class="nav-container">
+			<button class="btn create-task-btn">Создать задачу</button>
+			<button class="btn edit-task-btn" disabled>Редактировать</button>
+			<button class="btn delete-task-btn" disabled>Удалить выбранные</button>
 
-            <div class="quick-search-container">
-                <input class="quick-search" type="text" placeholder="Поиск...">
-            </div>
+			<div class="quick-search-container">
+				<input class="quick-search" type="text" placeholder="Поиск...">
+			</div>
 
-            <div class="sorting-container">
-                <label for="select-by">Сортировать по:</label>
-                <select class="select-by" id="select-by">
-                    <option value="creation_datetime|asc">Дате создания</option>
-                    <option value="title|asc">Названию [А-я]</option>
-                    <option value="title|desc">Названию [Я-а]</option>
-                    <option value="start_datetime|asc">Дате начала</option>
-                    <option value="end_datetime|asc">Дате окончания</option>
-                </select>
-            </div>
-        </nav>
-    </header>
+			<div class="sorting-container">
+				<label for="select-by">Сортировать по:</label>
+				<select class="select-by" id="select-by">
+					<option value="creation_datetime|asc">Дате создания</option>
+					<option value="title|asc">Названию [А-я]</option>
+					<option value="title|desc">Названию [Я-а]</option>
+					<option value="start_datetime|asc">Дате начала</option>
+					<option value="end_datetime|asc">Дате окончания</option>
+				</select>
+			</div>
+		</nav>
+	</header>
 
-    <div class="table-container">
-        <table class="table">
-            <thead>
-            <tr>
-                <th class="table-header-cell">
-                    <input class="header-checkbox" type="checkbox">
-                </th>
-                <th class="table-header-cell" data-id="title">Название</th>
-                <th class="table-header-cell" data-id="description">Описание</th>
-                <th class="table-header-cell" data-id="startDatetime">Дата начала</th>
-                <th class="table-header-cell" data-id="endDatetime">Дата окончания</th>
-            </tr>
-            </thead>
-            <tbody class="table-body"></tbody>
-        </table>
-    </div>
-    <div class="no-tasks-message">У вас ещё нет задачи. Попробуйте создать новую.</div>
+	<div class="table-container">
+		<table class="table">
+			<thead>
+			<tr>
+				<th class="table-header-cell">
+					<input class="header-checkbox" type="checkbox">
+				</th>
+				<th class="table-header-cell" data-id="title">Название</th>
+				<th class="table-header-cell" data-id="description">Описание</th>
+				<th class="table-header-cell" data-id="startDatetime">Дата начала</th>
+				<th class="table-header-cell" data-id="endDatetime">Дата окончания</th>
+			</tr>
+			</thead>
+			<tbody class="table-body"></tbody>
+		</table>
+	</div>
+	<div class="no-tasks-message">Задачи не найдены</div>
 </main>
 
 <script>
-    const createTaskBtnEl = document.querySelector('.create-task-btn');
-    createTaskBtnEl.addEventListener('click', () => window.location.href = 'task-create');
+	const createTaskBtnEl = document.querySelector('.create-task-btn');
+	createTaskBtnEl.addEventListener('click', () => window.location.href = 'task-create');
 
-    const editTaskBtnEl = document.querySelector('.edit-task-btn');
-    editTaskBtnEl.addEventListener('click', () => {
-        const checkboxCheckedEl = document.querySelector('.checkbox:checked');
-        const taskId = checkboxCheckedEl.taskId;
-        window.location.href = `task-edit?id=${ taskId }`;
-    });
+	const editTaskBtnEl = document.querySelector('.edit-task-btn');
+	editTaskBtnEl.addEventListener('click', () => {
+		const checkboxCheckedEl = document.querySelector('.checkbox:checked');
+		const taskId = checkboxCheckedEl.taskId;
+		window.location.href = `task-edit?id=${ taskId }`;
+	});
 
-    const deleteTaskBtnEl = document.querySelector('.delete-task-btn');
-    deleteTaskBtnEl.addEventListener('click', () => {
-        const checkboxCheckedEls = [ ...document.querySelectorAll('.checkbox:checked') ];
-        if (!checkboxCheckedEls.length) return;
+	const deleteTaskBtnEl = document.querySelector('.delete-task-btn');
+	deleteTaskBtnEl.addEventListener('click', () => {
+		const checkboxCheckedEls = [ ...document.querySelectorAll('.checkbox:checked') ];
+		if (!checkboxCheckedEls.length) return;
 
-        const selectedTaskIds = checkboxCheckedEls.map(checkboxEl => checkboxEl.taskId);
+		const selectedTaskIds = checkboxCheckedEls.map(checkboxEl => checkboxEl.taskId);
 
-        fetch('/tasks', {
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ selectedTaskIds }),
+		fetch('/tasks', {
+			method: 'DELETE',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ selectedTaskIds }),
 
-        }).then(() => {
-            checkboxCheckedEls.forEach(checkboxEl => {
-                checkboxEl.closest('.table-row').remove();
-            });
+		}).then(() => {
+			checkboxCheckedEls.forEach(checkboxEl => {
+				checkboxEl.closest('.table-row').remove();
+			});
 
-            const tableRowEls = [ ...document.querySelectorAll('.table-row') ];
-            if (!tableRowEls.length) noTasksMessageEl.classList.remove('hidden');
-            headerCheckboxEl.checked = false;
-            updateActionButtons();
-        });
-    });
+			const tableRowEls = [ ...document.querySelectorAll('.table-row') ];
+			if (!tableRowEls.length) noTasksMessageEl.classList.remove('hidden');
+			headerCheckboxEl.checked = false;
+			updateActionButtons();
+		});
+	});
 
-    const headerCheckboxEl = document.querySelector('.header-checkbox');
-    headerCheckboxEl.addEventListener('change', () => {
-        const checkboxEls = [ ...document.querySelectorAll('.checkbox') ];
-        checkboxEls.forEach(checkboxEl => checkboxEl.checked = headerCheckboxEl.checked);
-        updateActionButtons();
-    });
+	const headerCheckboxEl = document.querySelector('.header-checkbox');
+	headerCheckboxEl.addEventListener('change', () => {
+		const checkboxEls = [ ...document.querySelectorAll('.checkbox') ];
+		checkboxEls.forEach(checkboxEl => checkboxEl.checked = headerCheckboxEl.checked);
+		updateActionButtons();
+	});
 
-    const updateActionButtons = () => {
-        const selectedItemsCount = [ ...document.querySelectorAll('.checkbox:checked') ].length;
-        deleteTaskBtnEl.disabled = !selectedItemsCount;
-        editTaskBtnEl.disabled = selectedItemsCount !== 1;
-    }
+	const updateActionButtons = () => {
+		const selectedItemsCount = [ ...document.querySelectorAll('.checkbox:checked') ].length;
+		deleteTaskBtnEl.disabled = !selectedItemsCount;
+		editTaskBtnEl.disabled = selectedItemsCount !== 1;
+	}
 
-    const tableBodyEl = document.querySelector('.table-body');
-    const tableHeaderCellEls = [ ...document.querySelectorAll('.table-header-cell') ];
-    const noTasksMessageEl = document.querySelector('.no-tasks-message');
-    const titleEl = document.querySelector('.title');
+	const tableBodyEl = document.querySelector('.table-body');
+	const tableHeaderCellEls = [ ...document.querySelectorAll('.table-header-cell') ];
+	const noTasksMessageEl = document.querySelector('.no-tasks-message');
+	const titleEl = document.querySelector('.title');
 
-    const selectByEl = document.querySelector('.select-by');
-    selectByEl.addEventListener('change', () => {
-        const [ field, order ] = selectByEl.value.split('|');
-        const sort = { field, order };
+	const selectByEl = document.querySelector('.select-by');
+	selectByEl.addEventListener('change', () => {
+		const [ field, order ] = selectByEl.value.split('|');
+		const sort = { field, order };
 
-        const searchParams = generateQueryString(sort);
-        getTasks(searchParams);
-    });
+		const searchParams = generateQueryString(sort);
+		getTasks(searchParams);
+	});
 
-    const quickSearchEl = document.querySelector('.quick-search');
-    let searchTimeoutId;
-    let isSearchPending = false;
-    quickSearchEl.addEventListener('input', () => {
-        if (isSearchPending) clearTimeout(searchTimeoutId);
-        isSearchPending = true;
+	const quickSearchEl = document.querySelector('.quick-search');
+	let searchTimeoutId;
+	let isSearchPending = false;
+	quickSearchEl.addEventListener('input', () => {
+		if (isSearchPending) clearTimeout(searchTimeoutId);
+		isSearchPending = true;
 
-        searchTimeoutId = setTimeout(() => {
-            executeQuickSearch();
-            isSearchPending = false;
-        }, 500);
-    });
-    quickSearchEl.addEventListener('keydown', e => {
-        if (e.key === 'Enter') {
-            clearTimeout(searchTimeoutId);
-            executeQuickSearch();
-        }
-    });
-    quickSearchEl.addEventListener('blur', () => {
-        clearTimeout(searchTimeoutId);
-        executeQuickSearch();
-    });
+		searchTimeoutId = setTimeout(() => {
+			executeQuickSearch();
+			isSearchPending = false;
+		}, 500);
+	});
+	quickSearchEl.addEventListener('keydown', e => {
+		if (e.key === 'Enter') {
+			clearTimeout(searchTimeoutId);
+			executeQuickSearch();
+		}
+	});
+	quickSearchEl.addEventListener('blur', () => {
+		clearTimeout(searchTimeoutId);
+		executeQuickSearch();
+	});
 
-    const executeQuickSearch = () => {
-        const queryObject = { query: quickSearchEl.value };
-        const queryString = generateQueryString(queryObject);
-        getTasks(queryString);
-    };
+	const executeQuickSearch = () => {
+		const queryObject = { query: quickSearchEl.value.trim() };
+		const queryString = generateQueryString(queryObject);
+		getTasks(queryString);
+	};
 
-    const generateQueryString = params => {
-        const urlParams = new URLSearchParams;
+	const generateQueryString = params => {
+		const urlParams = new URLSearchParams;
 
-        Object.entries(params).forEach(([ key, value ]) => {
-            if (value != null) urlParams.append(key, value);
-        });
-        return urlParams.toString();
-    };
+		Object.entries(params).forEach(([ key, value ]) => {
+			if (value != null) urlParams.append(key, value);
+		});
+		return urlParams.toString();
+	};
 
-    const renderTask = task => {
-        const {
-            id,
-            creationDatetime,
-            title,
-            description,
-            startDatetime,
-            endDatetime,
-        } = task;
+	const renderTask = task => {
+		const {
+			id,
+			creationDatetime,
+			title,
+			description,
+			startDatetime,
+			endDatetime,
+		} = task;
 
-        const trEl = document.createElement('tr');
-        trEl.classList.add('table-row');
+		const trEl = document.createElement('tr');
+		trEl.classList.add('table-row');
 
-        tableHeaderCellEls.forEach((thEl, index) => {
-            const tdEl = document.createElement('td');
-            tdEl.classList.add('table-cell');
+		tableHeaderCellEls.forEach((thEl, index) => {
+			const tdEl = document.createElement('td');
+			tdEl.classList.add('table-cell');
 
-            const spanEl = document.createElement('span');
-            spanEl.classList.add('table-content');
+			const spanEl = document.createElement('span');
+			spanEl.classList.add('table-content');
 
-            if (index === 0) {
-                const inputEl = document.createElement('input');
-                inputEl.classList.add('checkbox');
-                inputEl.taskId = id;
-                inputEl.type = 'checkbox';
+			if (index === 0) {
+				const inputEl = document.createElement('input');
+				inputEl.classList.add('checkbox');
+				inputEl.taskId = id;
+				inputEl.type = 'checkbox';
 
-                tdEl.append(inputEl);
-            } else {
-                spanEl.taskId = id;
-                spanEl.innerText = (() => {
-                    switch (thEl.dataset.id) {
-                        case 'startDatetime':
-                            return new Intl.DateTimeFormat(navigator.language, {
-                                year: 'numeric',
-                                month: 'short',
-                                weekday: 'short',
-                                day: '2-digit',
-                                hour: '2-digit',
-                                minute: '2-digit',
-                            }).format(new Date(startDatetime));
-                        case 'endDatetime':
-                            return new Intl.DateTimeFormat(navigator.language, {
-                                year: 'numeric',
-                                month: 'short',
-                                weekday: 'short',
-                                day: '2-digit',
-                                hour: '2-digit',
-                                minute: '2-digit',
-                            }).format(new Date(endDatetime));
-                        default:
-                            return task[thEl.dataset.id];
-                    }
-                })();
-            }
-            trEl.append(tdEl);
-            if (index === 0) return;
-            tdEl.append(spanEl);
-        });
-        tableBodyEl.append(trEl);
-    };
-    const getTasks = queryString => {
-        return fetch(`/tasks?${ queryString }`).then(response => {
-            return response.json();
+				tdEl.append(inputEl);
+			} else {
+				spanEl.taskId = id;
+				spanEl.innerText = (() => {
+					switch (thEl.dataset.id) {
+						case 'startDatetime':
+							return new Intl.DateTimeFormat(navigator.language, {
+								year: 'numeric',
+								month: 'short',
+								weekday: 'short',
+								day: '2-digit',
+								hour: '2-digit',
+								minute: '2-digit',
+							}).format(new Date(startDatetime));
+						case 'endDatetime':
+							return new Intl.DateTimeFormat(navigator.language, {
+								year: 'numeric',
+								month: 'short',
+								weekday: 'short',
+								day: '2-digit',
+								hour: '2-digit',
+								minute: '2-digit',
+							}).format(new Date(endDatetime));
+						default:
+							return task[thEl.dataset.id];
+					}
+				})();
+			}
+			trEl.append(tdEl);
+			if (index === 0) return;
+			tdEl.append(spanEl);
+		});
+		tableBodyEl.append(trEl);
+	};
+	const getTasks = queryString => {
+		return fetch(`/tasks?${ queryString }`).then(response => {
+			return response.json();
 
-        }).then(tasks => {
-            noTasksMessageEl.classList.toggle('hidden', tasks?.length);
-            tableBodyEl.innerText = '';
-            titleEl.innerText = 'Задачи';
+		}).then(tasks => {
+			noTasksMessageEl.classList.toggle('hidden', tasks?.length);
+			tableBodyEl.innerText = '';
+			titleEl.innerText = 'Задачи';
 
-            if (!tasks?.length) return;
+			if (!tasks?.length) return;
 
-            let taskCount = 0;
-            tasks.forEach(task => {
-                taskCount++;
-                renderTask(task);
-            });
-            titleEl.innerText = `Задачи ${ taskCount }`;
+			let taskCount = 0;
+			tasks.forEach(task => {
+				taskCount++;
+				renderTask(task);
+			});
+			titleEl.innerText = `Задачи ${ taskCount }`;
 
-            const checkboxEls = [ ...document.querySelectorAll('.checkbox') ];
-            checkboxEls.forEach(checkboxEl => {
-                checkboxEl.addEventListener('change', updateActionButtons);
-            });
+			const checkboxEls = [ ...document.querySelectorAll('.checkbox') ];
+			checkboxEls.forEach(checkboxEl => {
+				checkboxEl.addEventListener('change', updateActionButtons);
+			});
 
-            const tableContentEls = [ ...document.querySelectorAll('.table-content') ];
-            tableContentEls.forEach(tableContentEl => {
-                tableContentEl.addEventListener('click', () => {
-                    const taskId = tableContentEl.taskId;
-                    window.location.href = `/task-details?id=${ taskId }`;
-                });
-            });
-        });
-    }
-    getTasks();
+			const tableContentEls = [ ...document.querySelectorAll('.table-content') ];
+			tableContentEls.forEach(tableContentEl => {
+				tableContentEl.addEventListener('click', () => {
+					const taskId = tableContentEl.taskId;
+					window.location.href = `/task-details?id=${ taskId }`;
+				});
+			});
+		});
+	}
+	getTasks();
 </script>
 </body>
 </html>
