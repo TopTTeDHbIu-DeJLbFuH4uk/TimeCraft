@@ -35,7 +35,7 @@ app.get('/task-details', (req, response) => {
 });
 
 app.get('/tasks', async (req, response) => {
-    const { query: queryString } = req.query;
+    const { search: queryString } = req.query;
     if (queryString) {
         const searchTerm = `
             SELECT 

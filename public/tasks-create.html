@@ -1,18 +1,18 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <style>
+	<meta charset="UTF-8">
+	<meta name="viewport"
+		  content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<style>
         @import url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap');
-    </style>
-    <title>TimeCraft</title>
-    <link rel="icon" href="images/logo.svg">
-    <!-- STYLES -->
-    <link rel="stylesheet" href="./styles/main.css">
-    <style>
+	</style>
+	<title>TimeCraft</title>
+	<link rel="icon" href="images/logo.svg">
+	<!-- STYLES -->
+	<link rel="stylesheet" href="./styles/main.css">
+	<style>
         .create-task {
             position: fixed;
             top: 0;
@@ -220,203 +220,203 @@
             background-color: #b77a45;
             border-color: #b77a45;
         }
-    </style>
+	</style>
 </head>
 <body>
 
 <div class="create-task">
-    <div class="container">
-        <header class="header">
-            <h1 class="title">Новая задача</h1>
-            <button class="close"></button>
-        </header>
+	<div class="container">
+		<header class="header">
+			<h1 class="title">Новая задача</h1>
+			<button class="close"></button>
+		</header>
 
-        <section class="details">
-            <div class="input-group">
-                <label for="title" class="label block-title">Название задачи:</label>
-                <input id="title" class="input" type="text" placeholder="Задача">
-            </div>
+		<section class="details">
+			<div class="input-group">
+				<label for="title" class="label block-title">Название задачи:</label>
+				<input id="title" class="input" type="text" placeholder="Задача">
+			</div>
 
-            <div class="input-group">
-                <label for="description" class="label block-title">Описание:</label>
-                <textarea id="description" class="input"></textarea>
-            </div>
+			<div class="input-group">
+				<label for="description" class="label block-title">Описание:</label>
+				<textarea id="description" class="input"></textarea>
+			</div>
 
-            <div class="input-group">
-                <label for="startDate" class="label block-title">Дата начала:</label>
-                <div class="date-group">
-                    <input id="startDate" class="input input-date start-date" type="date" min="2000-01-01"
-                           max="2100-01-01">
-                    <input id="startTime" class="input input-date start-time" type="time">
-                </div>
-            </div>
+			<div class="input-group">
+				<label for="startDate" class="label block-title">Дата начала:</label>
+				<div class="date-group">
+					<input id="startDate" class="input input-date start-date" type="date" min="2000-01-01"
+						   max="2100-01-01">
+					<input id="startTime" class="input input-date start-time" type="time">
+				</div>
+			</div>
 
-            <div class="input-group">
-                <label for="endDate" class="label block-title">Дата окончания:</label>
-                <div class="date-group">
-                    <input id="endDate" class="input input-date end-date" type="date" max="2100-01-01" min="2000-01-01">
-                    <input id="endTime" class="input input-date" type="time">
-                </div>
-            </div>
-        </section>
+			<div class="input-group">
+				<label for="endDate" class="label block-title">Дата окончания:</label>
+				<div class="date-group">
+					<input id="endDate" class="input input-date end-date" type="date" max="2100-01-01" min="2000-01-01">
+					<input id="endTime" class="input input-date" type="time">
+				</div>
+			</div>
+		</section>
 
-        <footer class="footer">
-            <button class="btn btn-save">Сохранить</button>
-            <button class="btn btn-cancel">Отмена</button>
-        </footer>
-    </div>
+		<footer class="footer">
+			<button class="btn btn-save">Сохранить</button>
+			<button class="btn btn-cancel">Отмена</button>
+		</footer>
+	</div>
 </div>
 
 <script>
-    const titleEl = document.querySelector('.title');
-    const inputEls = [ ...document.querySelectorAll('.input') ];
-    const btnSaveEl = document.querySelector('.btn-save');
-    const btnCancelEl = document.querySelector('.btn-cancel');
-    const startDateEl = document.querySelector('.start-date');
-    const startTimeEl = document.querySelector('.start-time');
-    const endDateEl = document.querySelector('.end-date');
+	const titleEl = document.querySelector('.title');
+	const inputEls = [ ...document.querySelectorAll('.input') ];
+	const btnSaveEl = document.querySelector('.btn-save');
+	const btnCancelEl = document.querySelector('.btn-cancel');
+	const startDateEl = document.querySelector('.start-date');
+	const startTimeEl = document.querySelector('.start-time');
+	const endDateEl = document.querySelector('.end-date');
 
-    startDateEl.valueAsDate = new Date();
-    const now = new Date();
-    const hours = now.getHours().toString().padStart(2, '0');
-    const minutes = now.getMinutes().toString().padStart(2, '0');
-    startTimeEl.value = `${ hours }:${ minutes }`;
+	startDateEl.valueAsDate = new Date();
+	const now = new Date();
+	const hours = now.getHours().toString().padStart(2, '0');
+	const minutes = now.getMinutes().toString().padStart(2, '0');
+	startTimeEl.value = `${ hours }:${ minutes }`;
 
-    const defaultValue = startDateEl.value;
-    startDateEl.addEventListener('input', () => {
-        if (!startDateEl.value) startDateEl.value = defaultValue;
-    });
+	const defaultValue = startDateEl.value;
+	startDateEl.addEventListener('input', () => {
+		if (!startDateEl.value) startDateEl.value = defaultValue;
+	});
 
-    startDateEl.addEventListener('blur', () => {
-        const selectedDate = new Date(startDateEl.value);
-        const selectedYear = selectedDate.getFullYear();
+	startDateEl.addEventListener('blur', () => {
+		const selectedDate = new Date(startDateEl.value);
+		const selectedYear = selectedDate.getFullYear();
 
-        if (selectedYear < 2000 || selectedYear > 2100) {
-            startDateEl.value = new Date().toISOString().slice(0, 10);
-        }
-    });
-    endDateEl.addEventListener('blur', () => {
-        const selectedDate = new Date(endDateEl.value);
-        const selectedYear = selectedDate.getFullYear();
+		if (selectedYear < 2000 || selectedYear > 2100) {
+			startDateEl.value = new Date().toISOString().slice(0, 10);
+		}
+	});
+	endDateEl.addEventListener('blur', () => {
+		const selectedDate = new Date(endDateEl.value);
+		const selectedYear = selectedDate.getFullYear();
 
-        const starSelectedDate = new Date(startDateEl.value);
-        const startYear = starSelectedDate.getFullYear();
+		const starSelectedDate = new Date(startDateEl.value);
+		const startYear = starSelectedDate.getFullYear();
 
-        if (selectedYear < startYear) {
-            endDateEl.value = startDateEl.value;
-        }
-        if (selectedYear > 2100) {
-            endDateEl.value = new Date().toISOString().slice(0, 10);
-        }
-    });
+		if (selectedYear < startYear) {
+			endDateEl.value = startDateEl.value;
+		}
+		if (selectedYear > 2100) {
+			endDateEl.value = new Date().toISOString().slice(0, 10);
+		}
+	});
 
-    const params = new URLSearchParams(window.location.search);
-    const taskId = params.get('id');
+	const params = new URLSearchParams(window.location.search);
+	const taskId = params.get('id');
 
-    const createTask = task => {
-        return fetch('/tasks', {
-            method: 'POST',
-            headers: {
-                'Content-type': 'application/json',
-            },
-            body: JSON.stringify({ task }),
-        });
-    };
+	const createTask = task => {
+		return fetch('/tasks', {
+			method: 'POST',
+			headers: {
+				'Content-type': 'application/json',
+			},
+			body: JSON.stringify({ task }),
+		});
+	};
 
-    const updateTask = task => {
-        return fetch(`/tasks/?id=${ taskId }`, {
-            method: 'PATCH',
-            headers: {
-                'Content-type': 'application/json',
-            },
-            body: JSON.stringify({ task }),
-        });
-    };
+	const updateTask = task => {
+		return fetch(`/tasks/?id=${ taskId }`, {
+			method: 'PATCH',
+			headers: {
+				'Content-type': 'application/json',
+			},
+			body: JSON.stringify({ task }),
+		});
+	};
 
-    btnSaveEl.addEventListener('click', () => {
-        inputEls.forEach(inputEl => {
-            if (!inputEl.value && inputEl.id !== 'description') {
-                inputEl.classList.add('required-field');
-            } else {
-                inputEl.classList.remove('required-field');
-            }
-        });
+	btnSaveEl.addEventListener('click', () => {
+		inputEls.forEach(inputEl => {
+			if (!inputEl.value && inputEl.id !== 'description') {
+				inputEl.classList.add('required-field');
+			} else {
+				inputEl.classList.remove('required-field');
+			}
+		});
 
-        const isAllowedTaskCreation = inputEls.some(inputEl => {
-            return inputEl.classList.contains('required-field');
-        });
+		const isAllowedTaskCreation = inputEls.some(inputEl => {
+			return inputEl.classList.contains('required-field');
+		});
 
-        if (isAllowedTaskCreation) return;
+		if (isAllowedTaskCreation) return;
 
-        btnSaveEl.disabled = true;
-        const task = {};
+		btnSaveEl.disabled = true;
+		const task = {};
 
-        inputEls.forEach(inputEl => {
-            task[inputEl.id] = inputEl.value;
-        });
+		inputEls.forEach(inputEl => {
+			task[inputEl.id] = inputEl.value;
+		});
 
-        const startDatetime = new Date(`${ task.startDate } ${ task.startTime }`).toISOString();
-        const endDatetime = new Date(`${ task.endDate } ${ task.endTime }`).toISOString();
+		const startDatetime = new Date(`${ task.startDate } ${ task.startTime }`).toISOString();
+		const endDatetime = new Date(`${ task.endDate } ${ task.endTime }`).toISOString();
 
-        const newTask = {
-            title: task.title,
-            description: task.description,
-            startDatetime,
-            endDatetime,
-        };
+		const newTask = {
+			title: task.title,
+			description: task.description,
+			startDatetime,
+			endDatetime,
+		};
 
-        if (taskId) {
-            updateTask(newTask).then(() => window.location.href = '/');
-        } else {
-            createTask(newTask).then(response => {
-                return response.json();
-            }).then(response => {
-                const newTask = {
-                    ...response,
-                    ...task,
-                };
-                window.location.href = '/';
-            });
-        }
-    });
+		if (taskId) {
+			updateTask(newTask).then(() => window.location.href = '/');
+		} else {
+			createTask(newTask).then(response => {
+				return response.json();
+			}).then(response => {
+				const newTask = {
+					...response,
+					...task,
+				};
+				window.location.href = '/';
+			});
+		}
+	});
 
-    btnCancelEl.addEventListener('click', () => history.back());
+	btnCancelEl.addEventListener('click', () => history.back());
 
-    if (taskId) {
-        titleEl.innerText = 'Редактирование задачи';
-        const getTask = () => {
-            return fetch(`/tasks/?id=${ taskId }`).then(response => {
-                return response.json();
-            });
-        };
-        getTask().then(task => {
-            const {
-                id,
-                creationDatetime,
-                title,
-                description,
-                startDatetime,
-                endDatetime,
-            } = task;
+	if (taskId) {
+		titleEl.innerText = 'Редактирование задачи';
+		const getTask = () => {
+			return fetch(`/tasks/?id=${ taskId }`).then(response => {
+				return response.json();
+			});
+		};
+		getTask().then(task => {
+			const {
+				id,
+				creationDatetime,
+				title,
+				description,
+				startDatetime,
+				endDatetime,
+			} = task;
 
-            inputEls.forEach(inputEl => {
-                inputEl.value = (() => {
-                    switch (inputEl.id) {
-                        case 'startDate':
-                            return new Date(startDatetime).toISOString().split('T')[0];
-                        case 'startTime':
-                            return new Date(startDatetime).toISOString().split('T')[1].slice(0, 8);
-                        case 'endDate':
-                            return new Date(endDatetime).toISOString().split('T')[0];
-                        case 'endTime':
-                            return new Date(endDatetime).toISOString().split('T')[1].slice(0, 8)
-                        default:
-                            return task[inputEl.id];
-                    }
-                })();
-            });
-        });
-    }
+			inputEls.forEach(inputEl => {
+				inputEl.value = (() => {
+					switch (inputEl.id) {
+						case 'startDate':
+							return new Date(startDatetime).toISOString().split('T')[0];
+						case 'startTime':
+							return new Date(startDatetime).toISOString().split('T')[1].slice(0, 8);
+						case 'endDate':
+							return new Date(endDatetime).toISOString().split('T')[0];
+						case 'endTime':
+							return new Date(endDatetime).toISOString().split('T')[1].slice(0, 8)
+						default:
+							return task[inputEl.id];
+					}
+				})();
+			});
+		});
+	}
 </script>
 </body>
 </html>

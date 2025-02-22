@@ -211,11 +211,14 @@
 			<div class="sorting-container">
 				<label for="select-by">Сортировать по:</label>
 				<select class="select-by" id="select-by">
-					<option value="creation_datetime|asc">Дате создания</option>
-					<option value="title|asc">Названию [А-я]</option>
-					<option value="title|desc">Названию [Я-а]</option>
-					<option value="start_datetime|asc">Дате начала</option>
-					<option value="end_datetime|asc">Дате окончания</option>
+					<option value="creation_datetime|asc">Дате создания (по возрастанию)</option>
+					<option value="creation_datetime|desc">Дате создания (по убыванию)</option>
+					<option value="title|asc">Названию (по возрастанию)</option>
+					<option value="title|desc">Названию (по убыванию)</option>
+					<option value="start_datetime|asc">Дате начала (по возрастанию)</option>
+					<option value="start_datetime|desc">Дате начала (по убыванию)</option>
+					<option value="end_datetime|asc">Дате окончания (по возрастанию)</option>
+					<option value="end_datetime|desc">Дате окончания (по убыванию)</option>
 				</select>
 			</div>
 		</nav>
@@ -294,41 +297,34 @@
 	const titleEl = document.querySelector('.title');
 
 	const selectByEl = document.querySelector('.select-by');
-	selectByEl.addEventListener('change', () => {
-		const [ field, order ] = selectByEl.value.split('|');
-		const sort = { field, order };
-
-		const searchParams = generateQueryString(sort);
-		getTasks(searchParams);
-	});
+	selectByEl.addEventListener('change', () => getAndRenderTasks());
 
 	const quickSearchEl = document.querySelector('.quick-search');
 	let searchTimeoutId;
-	let isSearchPending = false;
 	quickSearchEl.addEventListener('input', () => {
-		if (isSearchPending) clearTimeout(searchTimeoutId);
-		isSearchPending = true;
+		clearTimeout(searchTimeoutId);
 
 		searchTimeoutId = setTimeout(() => {
-			executeQuickSearch();
-			isSearchPending = false;
+			getAndRenderTasks();
 		}, 500);
 	});
 	quickSearchEl.addEventListener('keydown', e => {
 		if (e.key === 'Enter') {
-			clearTimeout(searchTimeoutId);
-			executeQuickSearch();
+			getAndRenderTasks();
 		}
 	});
 	quickSearchEl.addEventListener('blur', () => {
-		clearTimeout(searchTimeoutId);
-		executeQuickSearch();
+		getAndRenderTasks();
 	});
 
-	const executeQuickSearch = () => {
-		const queryObject = { query: quickSearchEl.value.trim() };
-		const queryString = generateQueryString(queryObject);
-		getTasks(queryString);
+	const getAndRenderTasks = () => {
+		clearTimeout(searchTimeoutId);
+		const search = { search: quickSearchEl.value.trim() };
+
+		const [ field, order ] = selectByEl.value.split('|');
+		const sort = { field, order };
+
+		getTasks(search, sort).then(tasks => renderTasks(tasks));
 	};
 
 	const generateQueryString = params => {
@@ -340,99 +336,101 @@
 		return urlParams.toString();
 	};
 
-	const renderTask = task => {
-		const {
-			id,
-			creationDatetime,
-			title,
-			description,
-			startDatetime,
-			endDatetime,
-		} = task;
+	const renderTasks = tasks => {
+		noTasksMessageEl.classList.toggle('hidden', tasks?.length);
+		tableBodyEl.innerText = '';
+		titleEl.innerText = 'Задачи';
 
-		const trEl = document.createElement('tr');
-		trEl.classList.add('table-row');
+		if (!tasks?.length) return;
 
-		tableHeaderCellEls.forEach((thEl, index) => {
-			const tdEl = document.createElement('td');
-			tdEl.classList.add('table-cell');
+		let taskCount = 0;
+		tasks.forEach(task => {
+			taskCount++;
 
-			const spanEl = document.createElement('span');
-			spanEl.classList.add('table-content');
+			const {
+				id,
+				creationDatetime,
+				title,
+				description,
+				startDatetime,
+				endDatetime,
+			} = task;
 
-			if (index === 0) {
-				const inputEl = document.createElement('input');
-				inputEl.classList.add('checkbox');
-				inputEl.taskId = id;
-				inputEl.type = 'checkbox';
+			const trEl = document.createElement('tr');
+			trEl.classList.add('table-row');
 
-				tdEl.append(inputEl);
-			} else {
-				spanEl.taskId = id;
-				spanEl.innerText = (() => {
-					switch (thEl.dataset.id) {
-						case 'startDatetime':
-							return new Intl.DateTimeFormat(navigator.language, {
-								year: 'numeric',
-								month: 'short',
-								weekday: 'short',
-								day: '2-digit',
-								hour: '2-digit',
-								minute: '2-digit',
-							}).format(new Date(startDatetime));
-						case 'endDatetime':
-							return new Intl.DateTimeFormat(navigator.language, {
-								year: 'numeric',
-								month: 'short',
-								weekday: 'short',
-								day: '2-digit',
-								hour: '2-digit',
-								minute: '2-digit',
-							}).format(new Date(endDatetime));
-						default:
-							return task[thEl.dataset.id];
-					}
-				})();
-			}
-			trEl.append(tdEl);
-			if (index === 0) return;
-			tdEl.append(spanEl);
+			tableHeaderCellEls.forEach((thEl, index) => {
+				const tdEl = document.createElement('td');
+				tdEl.classList.add('table-cell');
+
+				const spanEl = document.createElement('span');
+				spanEl.classList.add('table-content');
+
+				if (index === 0) {
+					const inputEl = document.createElement('input');
+					inputEl.classList.add('checkbox');
+					inputEl.taskId = id;
+					inputEl.type = 'checkbox';
+
+					tdEl.append(inputEl);
+				} else {
+					spanEl.taskId = id;
+					spanEl.innerText = (() => {
+						switch (thEl.dataset.id) {
+							case 'startDatetime':
+								return new Intl.DateTimeFormat(navigator.language, {
+									year: 'numeric',
+									month: 'short',
+									weekday: 'short',
+									day: '2-digit',
+									hour: '2-digit',
+									minute: '2-digit',
+								}).format(new Date(startDatetime));
+							case 'endDatetime':
+								return new Intl.DateTimeFormat(navigator.language, {
+									year: 'numeric',
+									month: 'short',
+									weekday: 'short',
+									day: '2-digit',
+									hour: '2-digit',
+									minute: '2-digit',
+								}).format(new Date(endDatetime));
+							default:
+								return task[thEl.dataset.id];
+						}
+					})();
+				}
+				trEl.append(tdEl);
+				if (index === 0) return;
+				tdEl.append(spanEl);
+			});
+			tableBodyEl.append(trEl);
 		});
-		tableBodyEl.append(trEl);
+		titleEl.innerText = `Задачи ${ taskCount }`;
+
+		const checkboxEls = [ ...document.querySelectorAll('.checkbox') ];
+		checkboxEls.forEach(checkboxEl => {
+			checkboxEl.addEventListener('change', updateActionButtons);
+		});
+
+		const tableContentEls = [ ...document.querySelectorAll('.table-content') ];
+		tableContentEls.forEach(tableContentEl => {
+			tableContentEl.addEventListener('click', () => {
+				const taskId = tableContentEl.taskId;
+				window.location.href = `/task-details?id=${ taskId }`;
+			});
+		});
 	};
-	const getTasks = queryString => {
+
+	const getTasks = (search, sort) => {
+		const queryObject = { ...search, ...sort };
+		const queryString = generateQueryString(queryObject);
+
 		return fetch(`/tasks?${ queryString }`).then(response => {
 			return response.json();
-
-		}).then(tasks => {
-			noTasksMessageEl.classList.toggle('hidden', tasks?.length);
-			tableBodyEl.innerText = '';
-			titleEl.innerText = 'Задачи';
-
-			if (!tasks?.length) return;
-
-			let taskCount = 0;
-			tasks.forEach(task => {
-				taskCount++;
-				renderTask(task);
-			});
-			titleEl.innerText = `Задачи ${ taskCount }`;
-
-			const checkboxEls = [ ...document.querySelectorAll('.checkbox') ];
-			checkboxEls.forEach(checkboxEl => {
-				checkboxEl.addEventListener('change', updateActionButtons);
-			});
-
-			const tableContentEls = [ ...document.querySelectorAll('.table-content') ];
-			tableContentEls.forEach(tableContentEl => {
-				tableContentEl.addEventListener('click', () => {
-					const taskId = tableContentEl.taskId;
-					window.location.href = `/task-details?id=${ taskId }`;
-				});
-			});
 		});
 	}
-	getTasks();
+	getTasks().then(tasks => renderTasks(tasks));
 </script>
 </body>
 </html>
