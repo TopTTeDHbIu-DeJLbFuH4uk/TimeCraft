@@ -47,7 +47,6 @@ app.get('/tasks', async (req, response) => {
             WHERE title ILIKE $1
             OR description ILIKE $1
         ;`;
-
         const searchResults = await pool.query(searchTerm, [ `%${ queryString }%` ]);
         const tasks = searchResults.rows;
 
@@ -84,15 +83,16 @@ app.get('/tasks', async (req, response) => {
     const taskId = req.query.id;
     if (taskId) {
         const getTask = `
-            SELECT id,
-                   creation_datetime,
-                   title,
-                   description,
-                   start_datetime,
-                   end_datetime
+            SELECT 
+                id,
+                creation_datetime,
+                title,
+                description,
+                start_datetime,
+                end_datetime
             FROM tasks
             WHERE id = ($1)
-            ;`;
+        ;`;
 
         const getTaskRes = await pool.query(getTask, [ taskId ]);
         const task = getTaskRes.rows[0];
@@ -131,10 +131,10 @@ app.patch('/tasks', async (req, response) => {
 
     const updateTask = `
         UPDATE tasks
-        SET title          = $1,
-            description    = $2,
+        SET title = $1,
+            description = $2,
             start_datetime = $3,
-            end_datetime   = $4
+            end_datetime = $4
         WHERE id = $5;
     ;`;
 

@@ -100,11 +100,6 @@
             margin-bottom: 5px;
         }
 
-        .required-field {
-            outline-offset: -2px;
-            outline: 2px solid #ff0000;
-        }
-
         .label {
             font-weight: 500;
             color: #5a3825;
@@ -145,6 +140,10 @@
 
         .input-date {
             width: clamp(100px, 100%, 140px);
+        }
+
+        .invalid {
+			border: 2px solid #ff0000;
         }
 
         #description {
@@ -234,7 +233,7 @@
 		<section class="details">
 			<div class="input-group">
 				<label for="title" class="label block-title">Название задачи:</label>
-				<input id="title" class="input" type="text" placeholder="Задача">
+				<input id="title" class="input" type="text" placeholder="Задача" required>
 			</div>
 
 			<div class="input-group">
@@ -246,16 +245,17 @@
 				<label for="startDate" class="label block-title">Дата начала:</label>
 				<div class="date-group">
 					<input id="startDate" class="input input-date start-date" type="date" min="2000-01-01"
-						   max="2100-01-01">
-					<input id="startTime" class="input input-date start-time" type="time">
+						   max="2100-01-01" required>
+					<input id="startTime" class="input input-date start-time" type="time" required>
 				</div>
 			</div>
 
 			<div class="input-group">
 				<label for="endDate" class="label block-title">Дата окончания:</label>
 				<div class="date-group">
-					<input id="endDate" class="input input-date end-date" type="date" max="2100-01-01" min="2000-01-01">
-					<input id="endTime" class="input input-date" type="time">
+					<input id="endDate" class="input input-date end-date" type="date" max="2100-01-01" min="2000-01-01"
+						   required>
+					<input id="endTime" class="input input-date" type="time" required>
 				</div>
 			</div>
 		</section>
@@ -269,12 +269,12 @@
 
 <script>
 	const titleEl = document.querySelector('.title');
-	const inputEls = [ ...document.querySelectorAll('.input') ];
 	const btnSaveEl = document.querySelector('.btn-save');
 	const btnCancelEl = document.querySelector('.btn-cancel');
 	const startDateEl = document.querySelector('.start-date');
 	const startTimeEl = document.querySelector('.start-time');
 	const endDateEl = document.querySelector('.end-date');
+	const inputEls = [ ...document.querySelectorAll('.input') ];
 
 	startDateEl.valueAsDate = new Date();
 	const now = new Date();
@@ -282,16 +282,11 @@
 	const minutes = now.getMinutes().toString().padStart(2, '0');
 	startTimeEl.value = `${ hours }:${ minutes }`;
 
-	const defaultValue = startDateEl.value;
-	startDateEl.addEventListener('input', () => {
-		if (!startDateEl.value) startDateEl.value = defaultValue;
-	});
-
 	startDateEl.addEventListener('blur', () => {
 		const selectedDate = new Date(startDateEl.value);
 		const selectedYear = selectedDate.getFullYear();
 
-		if (selectedYear < 2000 || selectedYear > 2100) {
+		if (selectedYear < 2000 || selectedYear > 2100 || !startDateEl.value) {
 			startDateEl.value = new Date().toISOString().slice(0, 10);
 		}
 	});
@@ -333,20 +328,22 @@
 		});
 	};
 
-	btnSaveEl.addEventListener('click', () => {
-		inputEls.forEach(inputEl => {
-			if (!inputEl.value && inputEl.id !== 'description') {
-				inputEl.classList.add('required-field');
+	const validate = () => {
+		const requiredInputEls = [ ...document.querySelectorAll('.input:required') ];
+
+		requiredInputEls.forEach(requiredInputEl => {
+			if (!requiredInputEl.value) {
+				requiredInputEl.classList.add('invalid');
 			} else {
-				inputEl.classList.remove('required-field');
+				requiredInputEl.classList.remove('invalid');
 			}
 		});
+		return requiredInputEls.some(requiredInputEl => requiredInputEl.classList.contains('invalid'));
+	};
 
-		const isAllowedTaskCreation = inputEls.some(inputEl => {
-			return inputEl.classList.contains('required-field');
-		});
-
-		if (isAllowedTaskCreation) return;
+	btnSaveEl.addEventListener('click', () => {
+		const isInvalid = validate();
+		if (isInvalid) return;
 
 		btnSaveEl.disabled = true;
 		const task = {};
