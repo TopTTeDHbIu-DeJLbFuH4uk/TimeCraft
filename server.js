@@ -35,6 +35,18 @@ app.get('/task-details', (req, response) => {
 });
 
 app.get('/tasks', async (req, response) => {
+    const { offset: offset } = req.query;
+    const limit = 20;
+
+    const getTasksCount = async () => {
+        const getTasksCount = `
+            SELECT COUNT(*) FROM tasks
+        ;`;
+
+        const getTasksCountRes = await pool.query(getTasksCount);
+        return getTasksCountRes.rows[0].count;
+    };
+    // ----------------------------------------------- //
     const { search: queryString } = req.query;
     if (queryString) {
         const searchTerm = `
@@ -46,14 +58,19 @@ app.get('/tasks', async (req, response) => {
             FROM tasks
             WHERE title ILIKE $1
             OR description ILIKE $1
+            LIMIT $2 OFFSET $3
         ;`;
-        const searchResults = await pool.query(searchTerm, [ `%${ queryString }%` ]);
+
+        const searchResults = await pool.query(searchTerm, [ `%${ queryString }%`, limit, offset ]);
         const tasks = searchResults.rows;
 
-        const res = tasks.map(task => convertToCamelCase(task));
-        return response.status(200).json(res);
-    }
+        const tasksCount = await getTasksCount();
 
+        const res = tasks.map(task => convertToCamelCase(task));
+
+        return response.status(200).json( {tasks: res, tasksCount: tasksCount, portionLength: offset} );
+    }
+    // ----------------------------------------------- //
     const { field: field, order: order } = req.query;
     if (field || order) {
         const allowedFields = ['creation_datetime', 'title', 'description', 'start_datetime', 'end_datetime'];
@@ -63,23 +80,27 @@ app.get('/tasks', async (req, response) => {
         const sortOrder = allowedOrders.includes(order?.toUpperCase()) ? order.toUpperCase() : 'ASC';
 
         const sortBy = `
-            SELECT 
+            SELECT
+                id,
                 creation_datetime,
                 title,
                 description,
                 start_datetime,
                 end_datetime
             FROM tasks
-            ORDER BY ${ field } ${ sortOrder };
+            ORDER BY ${ field } ${ sortOrder }
+            LIMIT $1 OFFSET $2
         ;`;
 
-        const sortedValues = await pool.query(sortBy);
+        const sortedValues = await pool.query(sortBy, [limit, offset]);
         const tasks = sortedValues.rows;
 
-        const res = tasks.map(task => convertToCamelCase(task));
-        return response.status(200).json(res);
-    }
+        const tasksCount = await getTasksCount();
 
+        const res = tasks.map(task => convertToCamelCase(task));
+        return response.status(200).json({tasks: res, tasksCount: tasksCount, portionLength: offset });
+    }
+    // ----------------------------------------------- //
     const taskId = req.query.id;
     if (taskId) {
         const getTask = `
@@ -100,23 +121,28 @@ app.get('/tasks', async (req, response) => {
         const res = convertToCamelCase(task);
         return response.status(200).json(res);
     }
-
-    const getTasks = `
-        SELECT 
-            id,
-            creation_datetime,
-            title,
-            description,
-            start_datetime,
-            end_datetime
-        FROM tasks
-    ;`;
-
-    const getTasksRes = await pool.query(getTasks);
-    const tasks = getTasksRes.rows;
-
-    const res = tasks.map(task => convertToCamelCase(task))
-    return response.status(200).json(res);
+    // ----------------------------------------------- //
+    // const getTasks = `
+    //     SELECT
+    //         id,
+    //         creation_datetime,
+    //         title,
+    //         description,
+    //         start_datetime,
+    //         end_datetime
+    //     FROM tasks
+    //     ORDER BY creation_datetime DESC
+    //     LIMIT $1 OFFSET $2
+    // ;`;
+    //
+    // const getTasksRes = await pool.query(getTasks, [limit, offset]);
+    // const tasks = getTasksRes.rows;
+    //
+    // const tasksCount = await getTasksCount();
+    //
+    // const res = tasks.map(task => convertToCamelCase(task))
+    //
+    // return response.status(200).json( {items: res, count: tasksCount} );
 });
 
 app.patch('/tasks', async (req, response) => {
